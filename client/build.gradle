@@ -37,6 +37,20 @@ sourceSets {
     }
 }
 
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": "APIstax Java Client",
+                "Implementation-Vendor": "instant:solutions OG",
+                "Implementation-URL": "https://apistax.io",
+                "Bundle-License": "https://raw.githubusercontent.com/APIstax/client-java/main/LICENSE",
+                "Scm-Connection": "scm:git:github.com/apistax/client-java.git",
+                "Scm-Url": "https://github.com/apistax/client-java",
+                "Build-Jdk-Spec": java.toolchain.languageVersion.get().asInt()
+        )
+    }
+}
+
 openApiGenerate {
     generatorName = 'java'
     inputSpec = "$projectDir/api.yml"
