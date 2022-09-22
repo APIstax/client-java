@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'org.openapi.generator' version '6.1.0'
+    id 'org.kordamp.gradle.jandex' version '1.0.0'
 }
 
 ext {
