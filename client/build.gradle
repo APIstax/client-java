@@ -135,7 +135,7 @@ publishing {
 
         maven {
             name = "ossrh"
-            url = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
             credentials {
                 username = properties.getProperty('ossrhUsername')
                 password = properties.getProperty('ossrhPassword')
@@ -144,7 +144,7 @@ publishing {
 
         maven {
             name = "ossrhSnapshot"
-            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+            url = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             credentials {
                 username = properties.getProperty('ossrhUsername')
                 password = properties.getProperty('ossrhPassword')
