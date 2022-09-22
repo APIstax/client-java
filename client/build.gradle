@@ -46,15 +46,15 @@ openApiGenerate {
     library = 'native'
 
     globalProperties = [
-            apis: 'false',
-            models: '',
-            modelDocs: 'false',
-            modelTests: 'false',
+            apis           : 'false',
+            models         : '',
+            modelDocs      : 'false',
+            modelTests     : 'false',
             supportingFiles: ''
     ]
 
     configOptions = [
-            dateLibrary: 'java8',
+            dateLibrary        : 'java8',
             useRuntimeException: 'true'
     ]
 }
