@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'signing'
     id 'org.openapi.generator' version '6.1.0'
     id 'org.kordamp.gradle.jandex' version '1.0.0'
 }
@@ -74,6 +75,9 @@ openApiGenerate {
     ]
 }
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 publishing {
     publications {
         apistax(MavenPublication) {
@@ -130,9 +134,6 @@ publishing {
     }
 
     repositories {
-        Properties properties = new Properties()
-        properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
         maven {
             name = "ossrh"
             url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
@@ -151,4 +152,8 @@ publishing {
             }
         }
     }
+}
+
+signing {
+    sign publishing.publications.apistax
 }
