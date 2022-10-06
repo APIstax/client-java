@@ -159,3 +159,5 @@ publishing {
 signing {
     sign publishing.publications.apistax
 }
+
+compileJava.dependsOn tasks.openApiGenerate
