@@ -63,7 +63,7 @@ openApiGenerate {
             models         : '',
             modelDocs      : 'false',
             modelTests     : 'false',
-            supportingFiles: ''
+            supportingFiles: 'false'
     ]
 
     configOptions = [
