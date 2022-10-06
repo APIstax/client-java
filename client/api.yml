@@ -2,7 +2,7 @@
 openapi: 3.0.3
 info:
   title: APIstax
-  version: 1.0.1
+  version: 1.1.0
 servers:
   - url: https://api.apistax.io/
 security:
@@ -27,8 +27,41 @@ paths:
           content:
             application/pdf:
               schema:
-                format: byte
+                format: binary
                 type: string
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
   /v1/epc-qr-code:
     get:
       tags:
@@ -109,8 +142,41 @@ paths:
           content:
             image/png:
               schema:
-                format: byte
+                format: binary
                 type: string
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
     post:
       tags:
         - EPC QR Code
@@ -129,8 +195,41 @@ paths:
           content:
             image/png:
               schema:
-                format: byte
+                format: binary
                 type: string
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
   /v1/vat-verification:
     get:
       tags:
@@ -151,6 +250,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VatVerificationResult'
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
     post:
       tags:
         - Verify VAT ID
@@ -170,6 +302,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/VatVerificationResult'
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
   /v1/geocode/search:
     get:
       tags:
@@ -202,6 +367,39 @@ paths:
         "204":
           description: An empty response if no entry could be found for the specified
             query.
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
     post:
       tags:
         - Geocoding
@@ -224,6 +422,39 @@ paths:
         "204":
           description: An empty response if no entry could be found for the specified
             query.
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
   /v1/geocode/reverse:
     get:
       tags:
@@ -265,6 +496,39 @@ paths:
         "204":
           description: An empty response if no entry could be found for the specified
             coordinates.
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
     post:
       tags:
         - Reverse Geocoding
@@ -287,6 +551,102 @@ paths:
         "204":
           description: An empty response if no entry could be found for the specified
             coordinates.
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /v1/indexes/{index}:
+    get:
+      tags:
+        - Indexes
+      summary: "List various, always up-to-date indexes like consumer price index\
+        \ for many countries"
+      operationId: indexes
+      parameters:
+        - name: index
+          in: path
+          description: The identification of the index. A complete list of available
+            indexes can be found in the documentation
+          required: true
+          schema:
+            $ref: '#/components/schemas/Index'
+        - name: frequency
+          in: query
+          description: The frequency in which the index is published
+          required: false
+          schema:
+            $ref: '#/components/schemas/IndexFrequency'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndexResult'
+        "204":
+          description: An empty response if specified index is not available.
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
 components:
   schemas:
     HtmlPayload:
@@ -490,6 +850,113 @@ components:
               description: A two letter country code based on ISO 3166-1 alpha-2.
                 For example "AT"
               type: string
+    IndexResult:
+      required:
+        - id
+        - name
+        - frequency
+      type: object
+      properties:
+        id:
+          description: The index name
+          type: string
+        name:
+          description: The official name of the index
+          type: string
+        source:
+          description: The data source of the index
+          type: string
+        frequency:
+          $ref: '#/components/schemas/IndexFrequency'
+        values:
+          description: The index series in ascending order
+          type: array
+          items:
+            $ref: '#/components/schemas/IndexValue'
+    IndexValue:
+      required:
+        - year
+        - value
+      type: object
+      properties:
+        year:
+          description: The year in the index series which the value represents
+          type: integer
+        month:
+          description: The month in the index series which the value represents
+          type: integer
+        value:
+          format: float
+          description: The index value
+          type: number
+    IndexFrequency:
+      enum:
+        - MONTHLY
+        - YEARLY
+      type: string
+    Index:
+      enum:
+        - at-cpi-1
+        - at-cpi-2
+        - at-cpi-1966
+        - at-cpi-1976
+        - at-cpi-1986
+        - at-cpi-1996
+        - at-cpi-2000
+        - at-cpi-2005
+        - at-cpi-2010
+        - at-cpi-2015
+        - at-cpi-2020
+        - de-cpi-2015
+        - at-eu-hicp-2015
+        - be-eu-hicp-2015
+        - bg-eu-hicp-2015
+        - cz-eu-hicp-2015
+        - dk-eu-hicp-2015
+        - de-eu-hicp-2015
+        - ee-eu-hicp-2015
+        - ie-eu-hicp-2015
+        - gr-eu-hicp-2015
+        - es-eu-hicp-2015
+        - fr-eu-hicp-2015
+        - hr-eu-hicp-2015
+        - it-eu-hicp-2015
+        - cy-eu-hicp-2015
+        - lv-eu-hicp-2015
+        - lt-eu-hicp-2015
+        - lu-eu-hicp-2015
+        - hu-eu-hicp-2015
+        - mt-eu-hicp-2015
+        - nl-eu-hicp-2015
+        - pl-eu-hicp-2015
+        - pt-eu-hicp-2015
+        - ro-eu-hicp-2015
+        - si-eu-hicp-2015
+        - sk-eu-hicp-2015
+        - fi-eu-hicp-2015
+        - se-eu-hicp-2015
+        - is-eu-hicp-2015
+        - no-eu-hicp-2015
+        - ch-eu-hicp-2015
+        - gb-eu-hicp-2015
+        - mk-eu-hicp-2015
+        - rs-eu-hicp-2015
+        - tr-eu-hicp-2015
+        - us-eu-hicp-2015
+        - ea-eu-hicp-2015
+        - eea-eu-hicp-2015
+        - eu-eu-hicp-2015
+      type: string
+    ErrorMessage:
+      required:
+        - messages
+      type: object
+      properties:
+        messages:
+          description: A list of error messages
+          type: array
+          items:
+            type: string
   securitySchemes:
     ApiKeyHeader:
       type: apiKey
