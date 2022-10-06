@@ -5,17 +5,18 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.apistax.client.models.ErrorMessage;
 import io.apistax.models.*;
+import io.mikael.urlbuilder.UrlBuilder;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 public class APIstaxClientImpl implements APIstaxClient {
@@ -94,7 +95,7 @@ public class APIstaxClientImpl implements APIstaxClient {
     }
 
     private byte[] requestBinary(String path, Object body) {
-        return request(path, body, inputStream -> {
+        return request(path, body, null, inputStream -> {
             try {
                 return inputStream.readAllBytes();
             } catch (IOException e) {
@@ -104,7 +105,15 @@ public class APIstaxClientImpl implements APIstaxClient {
     }
 
     private <T> T requestJson(String path, Object body, Class<T> type) {
-        return request(path, body, inputStream -> {
+        return requestJson(path, body, null, type);
+    }
+
+    private <T> T requestJson(String path, Map<String, String> query, Class<T> type) {
+        return requestJson(path, null, query, type);
+    }
+
+    private <T> T requestJson(String path, Object body, Map<String, String> query, Class<T> type) {
+        return request(path, body, query, inputStream -> {
             try {
                 return objectMapper.readValue(inputStream, type);
             } catch (IOException e) {
@@ -113,9 +122,9 @@ public class APIstaxClientImpl implements APIstaxClient {
         });
     }
 
-    private <T> T request(String path, Object body, Function<InputStream, T> mapper) {
+    private <T> T request(String path, Object body, Map<String, String> query, Function<InputStream, T> mapper) {
         try {
-            var request = createRequestBuilder(path, body).build();
+            var request = createRequestBuilder(path, body, query).build();
 
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
@@ -137,16 +146,27 @@ public class APIstaxClientImpl implements APIstaxClient {
         }
     }
 
-    private HttpRequest.Builder createRequestBuilder(String path, Object body) {
+    private HttpRequest.Builder createRequestBuilder(String path, Object body, Map<String, String> query) {
         try {
             var bodyData = objectMapper.writeValueAsBytes(body);
 
+            var builder = UrlBuilder.fromString(baseUri + path);
+
+            if (query != null && query.size() > 0) {
+                query.forEach(builder::addParameter);
+            }
+
             var requestBuilder = HttpRequest.newBuilder();
-            requestBuilder.uri(URI.create(baseUri + path));
+            requestBuilder.uri(builder.toUri());
             requestBuilder.header("Content-Type", "application/json");
             requestBuilder.header("Authorization", "Bearer " + apiKey);
             requestBuilder.header("User-Agent", "apistax-java-client");
-            requestBuilder.method("POST", HttpRequest.BodyPublishers.ofByteArray(bodyData));
+
+            if (body != null) {
+                requestBuilder.POST(HttpRequest.BodyPublishers.ofByteArray(bodyData));
+            } else {
+                requestBuilder.GET();
+            }
 
             return requestBuilder;
         } catch (IOException e) {
