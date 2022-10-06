@@ -94,6 +94,12 @@ public class APIstaxClientImpl implements APIstaxClient {
         return geocodeReverse(new GeocodeReversePayload().latitude(latitude).longitude(longitude));
     }
 
+    @Override
+    public IndexResult fetchIndex(Index index, IndexFrequency frequency) throws APIstaxException {
+        var query = Collections.singletonMap("frequency", frequency.getValue());
+        return requestJson("/v1/indexes/" + index.getValue(), query, IndexResult.class);
+    }
+
     private byte[] requestBinary(String path, Object body) {
         return request(path, body, null, inputStream -> {
             try {

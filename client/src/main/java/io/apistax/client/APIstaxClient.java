@@ -97,6 +97,16 @@ public interface APIstaxClient {
      */
     GeocodeResult geocodeReverse(double latitude, double longitude) throws APIstaxException;
 
+    /**
+     * List various, always up-to-date indexes like consumer price index for many countries
+     *
+     * @param index The identification of the index. A complete list of available indexes can be found in the documentation (required)
+     * @param frequency The frequency in which the index is published (optional)
+     * @return IndexResult
+     * @throws APIstaxException if fails to make API call
+     */
+    IndexResult fetchIndex(Index index, IndexFrequency frequency) throws APIstaxException;
+
     class Builder {
 
         private String apiKey;
