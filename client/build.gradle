@@ -74,7 +74,12 @@ openApiGenerate {
 }
 
 Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+if(System.getenv("OSSRH_USERNAME") == null) {
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+} else {
+    properties.put("ossrhUsername", System.getenv("OSSRH_USERNAME"))
+    properties.put("ossrhPassword", System.getenv("OSSRH_PASSWORD"))
+}
 
 publishing {
     publications {
