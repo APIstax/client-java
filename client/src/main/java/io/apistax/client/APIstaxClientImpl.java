@@ -154,8 +154,6 @@ public class APIstaxClientImpl implements APIstaxClient {
 
     private HttpRequest.Builder createRequestBuilder(String path, Object body, Map<String, String> query) {
         try {
-            var bodyData = objectMapper.writeValueAsBytes(body);
-
             var builder = UrlBuilder.fromString(baseUri + path);
 
             if (query != null && query.size() > 0) {
@@ -169,6 +167,7 @@ public class APIstaxClientImpl implements APIstaxClient {
             requestBuilder.header("User-Agent", "apistax-java-client");
 
             if (body != null) {
+                var bodyData = objectMapper.writeValueAsBytes(body);
                 requestBuilder.POST(HttpRequest.BodyPublishers.ofByteArray(bodyData));
             } else {
                 requestBuilder.GET();
