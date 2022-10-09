@@ -134,7 +134,7 @@ public class APIstaxClientImpl implements APIstaxClient {
 
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
-            if (response.statusCode() < 200 && response.statusCode() > 299) {
+            if (response.statusCode() < 200 || response.statusCode() > 299) {
                 try {
                     var errorMessage = objectMapper.readValue(response.body(), ErrorMessage.class);
                     throw new APIstaxException(errorMessage.getMessages());
