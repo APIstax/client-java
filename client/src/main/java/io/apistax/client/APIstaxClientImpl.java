@@ -157,7 +157,9 @@ public class APIstaxClientImpl implements APIstaxClient {
             var builder = UrlBuilder.fromString(host + path);
 
             if (query != null && query.size() > 0) {
-                query.forEach(builder::addParameter);
+                for (Map.Entry<String, String> entry : query.entrySet()) {
+                    builder = builder.addParameter(entry.getKey(), entry.getValue());
+                }
             }
 
             var requestBuilder = HttpRequest.newBuilder();
