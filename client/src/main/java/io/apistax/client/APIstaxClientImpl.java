@@ -21,14 +21,14 @@ import java.util.function.Function;
 
 public class APIstaxClientImpl implements APIstaxClient {
 
-    private static final String baseUri = "https://api.apistax.io";
-
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
+    private final String host;
     private final String apiKey;
 
-    public APIstaxClientImpl(String apiKey) {
+    public APIstaxClientImpl(String apiKey, String host) {
         this.apiKey = apiKey;
+        this.host = host;
 
         httpClient = HttpClient.newHttpClient();
 
@@ -154,7 +154,7 @@ public class APIstaxClientImpl implements APIstaxClient {
 
     private HttpRequest.Builder createRequestBuilder(String path, Object body, Map<String, String> query) {
         try {
-            var builder = UrlBuilder.fromString(baseUri + path);
+            var builder = UrlBuilder.fromString(host + path);
 
             if (query != null && query.size() > 0) {
                 query.forEach(builder::addParameter);

@@ -117,7 +117,7 @@ public interface APIstaxClient {
         }
 
         public APIstaxClient build() {
-            return new APIstaxClientImpl(apiKey);
+            return new APIstaxClientImpl(apiKey, "https://api.apistax.io");
         }
     }
 }
