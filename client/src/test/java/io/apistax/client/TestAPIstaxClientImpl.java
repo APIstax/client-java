@@ -175,7 +175,7 @@ public class TestAPIstaxClientImpl {
 
     private void assertGeocodeResult(WireMockRuntimeInfo runtimeInfo, String path, Consumer<MappingBuilder> mapping, Supplier<GeocodeResult> supplier) {
         var response = WireMock.aResponse()
-                .withBody("{\"position\":{\"latitude\":1.1,\"longitude\":2.2},\"address\":{\"houseNumber\":\"houseNumber\",\"street\":\"street\",\"city\":\"city\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"countryCode\":\"countryCode\"}})")
+                .withBody("{\"position\":{\"latitude\":1.1,\"longitude\":2.2},\"address\":{\"houseNumber\":\"houseNumber\",\"street\":\"street\",\"city\":\"city\",\"postalCode\":\"postalCode\",\"country\":\"country\",\"countryCode\":\"countryCode\"}}")
                 .withHeader("Content-Type", "application/json")
                 .withStatus(200);
 
