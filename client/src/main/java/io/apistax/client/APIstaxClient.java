@@ -107,6 +107,25 @@ public interface APIstaxClient {
      */
     IndexResult fetchIndex(Index index, IndexFrequency frequency) throws APIstaxException;
 
+    /**
+     * Generate a valid Swiss QR invoice as PDF
+     *
+     * @param payload The payload to generate QR invoice from (required)
+     * @return byte[]
+     * @throws APIstaxException if fails to make API call
+     */
+    byte[] generateSwissQrInvoice(SwissQrInvoicePayload payload) throws APIstaxException;
+
+    /**
+     * Generate a valid Swiss QR invoice
+     *
+     * @param payload The payload to generate QR invoice from (required)
+     * @param format The format to generate. Defaults to PDF
+     * @return byte[]
+     * @throws APIstaxException if fails to make API call
+     */
+    byte[] generateSwissQrInvoice(SwissQrInvoicePayload payload, SwissQrInvoiceFormat format) throws APIstaxException;
+
     class Builder {
 
         private String apiKey;

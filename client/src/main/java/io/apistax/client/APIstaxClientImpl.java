@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.apistax.models.*;
 import io.mikael.urlbuilder.UrlBuilder;
+import jdk.jfr.ContentType;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 
 import java.io.IOException;
@@ -46,7 +47,7 @@ public class APIstaxClientImpl implements APIstaxClient {
 
     @Override
     public byte[] convertHtmlToPdf(HtmlPayload payload) throws APIstaxException {
-        return requestBinary("/v1/html-to-pdf", payload);
+        return requestBinary("/v1/html-to-pdf", payload, "application/pdf");
     }
 
     @Override
@@ -56,7 +57,7 @@ public class APIstaxClientImpl implements APIstaxClient {
 
     @Override
     public byte[] generateEpcQrCode(EpcQrCodePayload payload) throws APIstaxException {
-        return requestBinary("/v1/epc-qr-code", payload);
+        return requestBinary("/v1/epc-qr-code", payload, "image/png");
     }
 
     @Override
@@ -100,8 +101,26 @@ public class APIstaxClientImpl implements APIstaxClient {
         return requestJson("/v1/indexes/" + index.getValue(), query, IndexResult.class);
     }
 
-    private byte[] requestBinary(String path, Object body) {
-        return request(path, body, null, inputStream -> {
+    @Override
+    public byte[] generateSwissQrInvoice(SwissQrInvoicePayload payload) throws APIstaxException {
+        return generateSwissQrInvoice(payload, null);
+    }
+
+    @Override
+    public byte[] generateSwissQrInvoice(SwissQrInvoicePayload payload, SwissQrInvoiceFormat format) throws APIstaxException {
+        String accept = "application/pdf";
+
+        if(format == SwissQrInvoiceFormat.SVG) {
+            accept = "image/svg+xml";
+        } else if(format == SwissQrInvoiceFormat.PNG) {
+            accept = "image/png";
+        }
+
+        return requestBinary("/v1/swiss-qr-invoice", payload, accept);
+    }
+
+    private byte[] requestBinary(String path, Object body, String accept) {
+        return request(path, body, accept, null, inputStream -> {
             try {
                 return inputStream.readAllBytes();
             } catch (IOException e) {
@@ -119,7 +138,7 @@ public class APIstaxClientImpl implements APIstaxClient {
     }
 
     private <T> T requestJson(String path, Object body, Map<String, String> query, Class<T> type) {
-        return request(path, body, query, inputStream -> {
+        return request(path, body, "application/json", query, inputStream -> {
             try {
                 return objectMapper.readValue(inputStream, type);
             } catch (IOException e) {
@@ -128,9 +147,9 @@ public class APIstaxClientImpl implements APIstaxClient {
         });
     }
 
-    private <T> T request(String path, Object body, Map<String, String> query, Function<InputStream, T> mapper) {
+    private <T> T request(String path, Object body, String accept, Map<String, String> query, Function<InputStream, T> mapper) {
         try {
-            var request = createRequestBuilder(path, body, query).build();
+            var request = createRequestBuilder(path, body, accept, query).build();
 
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofInputStream());
 
@@ -152,11 +171,11 @@ public class APIstaxClientImpl implements APIstaxClient {
         }
     }
 
-    private HttpRequest.Builder createRequestBuilder(String path, Object body, Map<String, String> query) {
+    private HttpRequest.Builder createRequestBuilder(String path, Object body, String accept, Map<String, String> query) {
         try {
             var builder = UrlBuilder.fromString(host + path);
 
-            if (query != null && query.size() > 0) {
+            if (query != null && !query.isEmpty()) {
                 for (Map.Entry<String, String> entry : query.entrySet()) {
                     builder = builder.addParameter(entry.getKey(), entry.getValue());
                 }
@@ -167,6 +186,10 @@ public class APIstaxClientImpl implements APIstaxClient {
             requestBuilder.header("Content-Type", "application/json");
             requestBuilder.header("Authorization", "Bearer " + apiKey);
             requestBuilder.header("User-Agent", "apistax-java-client");
+
+            if(accept != null) {
+                requestBuilder.header("Accept", accept);
+            }
 
             if (body != null) {
                 var bodyData = objectMapper.writeValueAsBytes(body);
