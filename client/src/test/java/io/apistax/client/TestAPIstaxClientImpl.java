@@ -40,7 +40,7 @@ public class TestAPIstaxClientImpl {
         var client = getClient(runtimeInfo);
 
         var response = WireMock.aResponse()
-                .withBody("PDF" .getBytes(StandardCharsets.UTF_8))
+                .withBody("PDF".getBytes(StandardCharsets.UTF_8))
                 .withHeader("Content-Type", "application/pdf")
                 .withStatus(200);
 
@@ -79,7 +79,7 @@ public class TestAPIstaxClientImpl {
         );
 
         assertNotNull(result);
-        assertArrayEquals("PDF" .getBytes(StandardCharsets.UTF_8), result);
+        assertArrayEquals("PDF".getBytes(StandardCharsets.UTF_8), result);
     }
 
     @Test
@@ -87,7 +87,7 @@ public class TestAPIstaxClientImpl {
         var client = getClient(runtimeInfo);
 
         var response = WireMock.aResponse()
-                .withBody("EPC-QR-CODE" .getBytes(StandardCharsets.UTF_8))
+                .withBody("EPC-QR-CODE".getBytes(StandardCharsets.UTF_8))
                 .withHeader("Content-Type", "image/png")
                 .withStatus(200);
 
@@ -124,7 +124,7 @@ public class TestAPIstaxClientImpl {
         );
 
         assertNotNull(result);
-        assertArrayEquals("EPC-QR-CODE" .getBytes(StandardCharsets.UTF_8), result);
+        assertArrayEquals("EPC-QR-CODE".getBytes(StandardCharsets.UTF_8), result);
     }
 
     @Test
@@ -231,6 +231,274 @@ public class TestAPIstaxClientImpl {
         assertEquals(1, value.getYear());
         assertEquals(2, value.getMonth());
         assertEquals(10.10f, value.getValue());
+    }
+
+    @Test
+    void testGenerateSwissQrInvoice(WireMockRuntimeInfo runtimeInfo) {
+        var client = getClient(runtimeInfo);
+
+        var response = WireMock.ok()
+                .withBody("SWISS_QR_INVOICE_PDF")
+                .withHeader("Content-Type", "application/pdf");
+        stub(runtimeInfo, () ->
+                WireMock.post("/v1/swiss-qr-invoice")
+                        .withRequestBody(WireMock.equalToJson("{\n" +
+                                "  \"creditor\": {\n" +
+                                "    \"iban\": \"CH07 3000 0017 3000 9700 0\",\n" +
+                                "    \"name\": \"Schweizerisches Rotes Kreuz\",\n" +
+                                "    \"street\": \"Postfach\",\n" +
+                                "    \"postalCode\": \"3001\",\n" +
+                                "    \"city\": \"Bern\",\n" +
+                                "    \"country\": \"CH\"\n" +
+                                "  },\n" +
+                                "  \"debtor\": {\n" +
+                                "    \"name\": \"Max Mustermann\",\n" +
+                                "    \"street\": \"Musterstraße 1\",\n" +
+                                "    \"postalCode\": \"3000\",\n" +
+                                "    \"city\": \"Bern\",\n" +
+                                "    \"country\": \"CH\"\n" +
+                                "  },\n" +
+                                "  \"currency\": \"CHF\",\n" +
+                                "  \"amount\": 150.00,\n" +
+                                "  \"information\": \"Emergency relief\",\n" +
+                                "  \"reference\": \"00 00000 00371 40000 00000 85842\",\n" +
+                                "  \"size\": \"A4_SHEET\",\n" +
+                                "  \"language\": \"EN\"\n" +
+                                "}", true, true))
+                        .withHeader("Accept", WireMock.equalTo("application/pdf"))
+                        .willReturn(response)
+        );
+
+        var creditor = new SwissQrInvoicePayloadCreditor();
+        creditor.setIban("CH07 3000 0017 3000 9700 0");
+        creditor.setName("Schweizerisches Rotes Kreuz");
+        creditor.setStreet("Postfach");
+        creditor.setPostalCode("3001");
+        creditor.setCity("Bern");
+        creditor.setCountry("CH");
+
+        var debtor = new SwissQrInvoicePayloadDebtor();
+        debtor.setName("Max Mustermann");
+        debtor.setStreet("Musterstraße 1");
+        debtor.setPostalCode("3000");
+        debtor.setCity("Bern");
+        debtor.setCountry("CH");
+
+        var payload = new SwissQrInvoicePayload();
+        payload.setCreditor(creditor);
+        payload.setDebtor(debtor);
+        payload.setCurrency(SwissQrInvoicePayload.CurrencyEnum.CHF);
+        payload.setAmount(150f);
+        payload.setInformation("Emergency relief");
+        payload.setReference("00 00000 00371 40000 00000 85842");
+        payload.setSize(SwissQrInvoicePayload.SizeEnum.A4_SHEET);
+        payload.setLanguage(SwissQrInvoicePayload.LanguageEnum.EN);
+
+        var result = client.generateSwissQrInvoice(payload);
+
+        assertNotNull(result);
+        assertArrayEquals("SWISS_QR_INVOICE_PDF".getBytes(StandardCharsets.UTF_8), result);
+    }
+
+    @Test
+    void testGenerateSwissQrInvoiceSvg(WireMockRuntimeInfo runtimeInfo) {
+        var client = getClient(runtimeInfo);
+
+        var response = WireMock.ok()
+                .withBody("SWISS_QR_INVOICE_SVG")
+                .withHeader("Content-Type", "image/svg+xml");
+        stub(runtimeInfo, () ->
+                WireMock.post("/v1/swiss-qr-invoice")
+                        .withRequestBody(WireMock.equalToJson("{\n" +
+                                "  \"creditor\": {\n" +
+                                "    \"iban\": \"CH07 3000 0017 3000 9700 0\",\n" +
+                                "    \"name\": \"Schweizerisches Rotes Kreuz\",\n" +
+                                "    \"street\": \"Postfach\",\n" +
+                                "    \"postalCode\": \"3001\",\n" +
+                                "    \"city\": \"Bern\",\n" +
+                                "    \"country\": \"CH\"\n" +
+                                "  },\n" +
+                                "  \"debtor\": {\n" +
+                                "    \"name\": \"Max Mustermann\",\n" +
+                                "    \"street\": \"Musterstraße 1\",\n" +
+                                "    \"postalCode\": \"3000\",\n" +
+                                "    \"city\": \"Bern\",\n" +
+                                "    \"country\": \"CH\"\n" +
+                                "  },\n" +
+                                "  \"currency\": \"CHF\",\n" +
+                                "  \"amount\": 150.00,\n" +
+                                "  \"information\": \"Emergency relief\",\n" +
+                                "  \"reference\": \"00 00000 00371 40000 00000 85842\",\n" +
+                                "  \"size\": \"A4_SHEET\",\n" +
+                                "  \"language\": \"EN\"\n" +
+                                "}", true, true))
+                        .withHeader("Accept", WireMock.equalTo("image/svg+xml"))
+                        .willReturn(response)
+        );
+
+        var creditor = new SwissQrInvoicePayloadCreditor();
+        creditor.setIban("CH07 3000 0017 3000 9700 0");
+        creditor.setName("Schweizerisches Rotes Kreuz");
+        creditor.setStreet("Postfach");
+        creditor.setPostalCode("3001");
+        creditor.setCity("Bern");
+        creditor.setCountry("CH");
+
+        var debtor = new SwissQrInvoicePayloadDebtor();
+        debtor.setName("Max Mustermann");
+        debtor.setStreet("Musterstraße 1");
+        debtor.setPostalCode("3000");
+        debtor.setCity("Bern");
+        debtor.setCountry("CH");
+
+        var payload = new SwissQrInvoicePayload();
+        payload.setCreditor(creditor);
+        payload.setDebtor(debtor);
+        payload.setCurrency(SwissQrInvoicePayload.CurrencyEnum.CHF);
+        payload.setAmount(150f);
+        payload.setInformation("Emergency relief");
+        payload.setReference("00 00000 00371 40000 00000 85842");
+        payload.setSize(SwissQrInvoicePayload.SizeEnum.A4_SHEET);
+        payload.setLanguage(SwissQrInvoicePayload.LanguageEnum.EN);
+
+        var result = client.generateSwissQrInvoice(payload, SwissQrInvoiceFormat.SVG);
+
+        assertNotNull(result);
+        assertArrayEquals("SWISS_QR_INVOICE_SVG".getBytes(StandardCharsets.UTF_8), result);
+    }
+
+    @Test
+    void testGenerateSwissQrInvoicePng(WireMockRuntimeInfo runtimeInfo) {
+        var client = getClient(runtimeInfo);
+
+        var response = WireMock.ok()
+                .withBody("SWISS_QR_INVOICE_PNG")
+                .withHeader("Content-Type", "image/png");
+        stub(runtimeInfo, () ->
+                WireMock.post("/v1/swiss-qr-invoice")
+                        .withRequestBody(WireMock.equalToJson("{\n" +
+                                "  \"creditor\": {\n" +
+                                "    \"iban\": \"CH07 3000 0017 3000 9700 0\",\n" +
+                                "    \"name\": \"Schweizerisches Rotes Kreuz\",\n" +
+                                "    \"street\": \"Postfach\",\n" +
+                                "    \"postalCode\": \"3001\",\n" +
+                                "    \"city\": \"Bern\",\n" +
+                                "    \"country\": \"CH\"\n" +
+                                "  },\n" +
+                                "  \"debtor\": {\n" +
+                                "    \"name\": \"Max Mustermann\",\n" +
+                                "    \"street\": \"Musterstraße 1\",\n" +
+                                "    \"postalCode\": \"3000\",\n" +
+                                "    \"city\": \"Bern\",\n" +
+                                "    \"country\": \"CH\"\n" +
+                                "  },\n" +
+                                "  \"currency\": \"CHF\",\n" +
+                                "  \"amount\": 150.00,\n" +
+                                "  \"information\": \"Emergency relief\",\n" +
+                                "  \"reference\": \"00 00000 00371 40000 00000 85842\",\n" +
+                                "  \"size\": \"A4_SHEET\",\n" +
+                                "  \"language\": \"EN\"\n" +
+                                "}", true, true))
+                        .withHeader("Accept", WireMock.equalTo("image/png"))
+                        .willReturn(response)
+        );
+
+        var creditor = new SwissQrInvoicePayloadCreditor();
+        creditor.setIban("CH07 3000 0017 3000 9700 0");
+        creditor.setName("Schweizerisches Rotes Kreuz");
+        creditor.setStreet("Postfach");
+        creditor.setPostalCode("3001");
+        creditor.setCity("Bern");
+        creditor.setCountry("CH");
+
+        var debtor = new SwissQrInvoicePayloadDebtor();
+        debtor.setName("Max Mustermann");
+        debtor.setStreet("Musterstraße 1");
+        debtor.setPostalCode("3000");
+        debtor.setCity("Bern");
+        debtor.setCountry("CH");
+
+        var payload = new SwissQrInvoicePayload();
+        payload.setCreditor(creditor);
+        payload.setDebtor(debtor);
+        payload.setCurrency(SwissQrInvoicePayload.CurrencyEnum.CHF);
+        payload.setAmount(150f);
+        payload.setInformation("Emergency relief");
+        payload.setReference("00 00000 00371 40000 00000 85842");
+        payload.setSize(SwissQrInvoicePayload.SizeEnum.A4_SHEET);
+        payload.setLanguage(SwissQrInvoicePayload.LanguageEnum.EN);
+
+        var result = client.generateSwissQrInvoice(payload, SwissQrInvoiceFormat.PNG);
+
+        assertNotNull(result);
+        assertArrayEquals("SWISS_QR_INVOICE_PNG".getBytes(StandardCharsets.UTF_8), result);
+    }
+
+    @Test
+    void testGenerateSwissQrInvoicePdf(WireMockRuntimeInfo runtimeInfo) {
+        var client = getClient(runtimeInfo);
+
+        var response = WireMock.ok()
+                .withBody("SWISS_QR_INVOICE_PDF")
+                .withHeader("Content-Type", "application/pdf");
+        stub(runtimeInfo, () ->
+                WireMock.post("/v1/swiss-qr-invoice")
+                        .withRequestBody(WireMock.equalToJson("{\n" +
+                                "  \"creditor\": {\n" +
+                                "    \"iban\": \"CH07 3000 0017 3000 9700 0\",\n" +
+                                "    \"name\": \"Schweizerisches Rotes Kreuz\",\n" +
+                                "    \"street\": \"Postfach\",\n" +
+                                "    \"postalCode\": \"3001\",\n" +
+                                "    \"city\": \"Bern\",\n" +
+                                "    \"country\": \"CH\"\n" +
+                                "  },\n" +
+                                "  \"debtor\": {\n" +
+                                "    \"name\": \"Max Mustermann\",\n" +
+                                "    \"street\": \"Musterstraße 1\",\n" +
+                                "    \"postalCode\": \"3000\",\n" +
+                                "    \"city\": \"Bern\",\n" +
+                                "    \"country\": \"CH\"\n" +
+                                "  },\n" +
+                                "  \"currency\": \"CHF\",\n" +
+                                "  \"amount\": 150.00,\n" +
+                                "  \"information\": \"Emergency relief\",\n" +
+                                "  \"reference\": \"00 00000 00371 40000 00000 85842\",\n" +
+                                "  \"size\": \"A4_SHEET\",\n" +
+                                "  \"language\": \"EN\"\n" +
+                                "}", true, true))
+                        .withHeader("Accept", WireMock.equalTo("application/pdf"))
+                        .willReturn(response)
+        );
+
+        var creditor = new SwissQrInvoicePayloadCreditor();
+        creditor.setIban("CH07 3000 0017 3000 9700 0");
+        creditor.setName("Schweizerisches Rotes Kreuz");
+        creditor.setStreet("Postfach");
+        creditor.setPostalCode("3001");
+        creditor.setCity("Bern");
+        creditor.setCountry("CH");
+
+        var debtor = new SwissQrInvoicePayloadDebtor();
+        debtor.setName("Max Mustermann");
+        debtor.setStreet("Musterstraße 1");
+        debtor.setPostalCode("3000");
+        debtor.setCity("Bern");
+        debtor.setCountry("CH");
+
+        var payload = new SwissQrInvoicePayload();
+        payload.setCreditor(creditor);
+        payload.setDebtor(debtor);
+        payload.setCurrency(SwissQrInvoicePayload.CurrencyEnum.CHF);
+        payload.setAmount(150f);
+        payload.setInformation("Emergency relief");
+        payload.setReference("00 00000 00371 40000 00000 85842");
+        payload.setSize(SwissQrInvoicePayload.SizeEnum.A4_SHEET);
+        payload.setLanguage(SwissQrInvoicePayload.LanguageEnum.EN);
+
+        var result = client.generateSwissQrInvoice(payload, SwissQrInvoiceFormat.PDF);
+
+        assertNotNull(result);
+        assertArrayEquals("SWISS_QR_INVOICE_PDF".getBytes(StandardCharsets.UTF_8), result);
     }
 
     private APIstaxClient getClient(WireMockRuntimeInfo runtimeInfo) {
