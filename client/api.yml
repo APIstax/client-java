@@ -651,6 +651,60 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
+  /v1/invoice-pdf:
+    post:
+      tags:
+        - Invoice PDF
+      summary: Create a invoice PDF
+      operationId: createInvoicePDF
+      requestBody:
+        description: The invoice object to create a PDF from.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvoicePayload'
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/pdf:
+              schema:
+                format: binary
+                type: string
+        "402":
+          description: Your remaining quota is not sufficient to perform the request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "403":
+          description: Access is not allowed. The API key may be missing from the
+            request or the API key may have been revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "406":
+          description: A required parameter is missing or in a wrong format.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "500":
+          description: An unexpected error occurred on the server side. Please retry
+            the request at a later time.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        "503":
+          description: "The endpoint is temporarily unavailable, either due to planned\
+            \ maintenance or outage. Please retry the request at a later time."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
   /v1/swiss-qr-invoice:
     post:
       tags:
@@ -1017,59 +1071,237 @@ components:
         - eea-eu-hicp-2015
         - eu-eu-hicp-2015
       type: string
+    InvoicePayload:
+      required:
+        - template
+        - sender
+        - recipient
+        - items
+      type: object
+      properties:
+        template:
+          description: The invoice template
+          enum:
+            - ONE
+            - TWO
+            - THREE
+          type: string
+        sender:
+          description: The data of the invoice issuer
+          type: array
+          items:
+            type: string
+        recipient:
+          description: The data of the invoice recipient
+          type: array
+          items:
+            type: string
+        logo:
+          description: The logo of the invoice issuer encoded as base64.
+          type: string
+        locale:
+          description: The country or language according to which the values are to
+            be formatted.
+          default: de-AT
+          type: string
+        currency:
+          description: The currency according to ISO 4217
+          default: EUR
+          type: string
+        items:
+          description: The list of items that are to be invoiced.
+          type: array
+          items:
+            description: "A single invoice item. Either unitPrice or sumPrice must\
+              \ be set. If the unitPrice field is set, the sumPrice is calculated."
+            required:
+              - description
+            type: object
+            properties:
+              description:
+                description: The description of the invoice item
+                type: string
+              amount:
+                format: double
+                description: The amount of the invoice item
+                default: 1
+                type: number
+              unit:
+                description: "The optional unit, for example, kilogram or piece."
+                type: string
+              unitPrice:
+                format: double
+                description: The price per unit
+                type: number
+              sumPrice:
+                format: double
+                description: "The total price of the invoice item. If the field is\
+                  \ not set, it is calculated using the unit price and amount."
+                type: number
+        footerItems:
+          description: "The list of footer items. An informative element that is shown\
+            \ in the footer of the invoice, for example, to display information about\
+            \ the company."
+          type: array
+          items:
+            description: "An informative element that is shown in the footer of the\
+              \ invoice, for example, to display information about the company."
+            type: object
+            properties:
+              title:
+                description: The item title
+                type: string
+              values:
+                description: A list of values
+                type: array
+                items:
+                  type: string
+        contextItems:
+          description: "The list of context items. An informative element that is\
+            \ shown in the content of the invoice, for example to display detailed\
+            \ information such as the invoice number for the respective invoice."
+          type: array
+          items:
+            description: "An informative element that is shown in the content of the\
+              \ invoice, for example to display detailed information such as the invoice\
+              \ number for the respective invoice."
+            type: object
+            properties:
+              title:
+                description: The item title
+                type: string
+              value:
+                description: The item value
+                type: string
+        feeTaxItems:
+          description: "The list of fee and tax items. An element to add any tax and/or\
+            \ fees in addition to the invoice items. When using the 'percent' field,\
+            \ the value is calculated from the sum of the invoice items including\
+            \ any previous taxes and fees. The values are calculated in the order\
+            \ passed."
+          type: array
+          items:
+            description: "An element to add any tax and/or fees in addition to the\
+              \ invoice items. When using the 'percent' field, the value is calculated\
+              \ from the sum of the invoice items including any previous taxes and\
+              \ fees. The values are calculated in the order passed."
+            required:
+              - title
+            type: object
+            properties:
+              title:
+                description: The element title for example "20% VAT" or "Dunning charge".
+                type: string
+              percent:
+                format: float
+                description: The item percent. The resulting value is calculated from
+                  the sum of the invoice items including any previous taxes and fees.
+                  The values are calculated in the order passed.
+                type: number
+              value:
+                format: double
+                description: The item value
+                type: number
+        notice:
+          description: A note that is printed at the end of the invoice.
+          type: string
+        labels:
+          description: 'This object can be used to overwrite standard invoice texts. '
+          type: object
+          properties:
+            invoice:
+              default: Invoice
+              type: string
+            subtotal:
+              default: Subtotal
+              type: string
+            total:
+              default: Total
+              type: string
+            amount:
+              default: Amount
+              type: string
+            description:
+              default: Description
+              type: string
+            unitPrice:
+              default: Unit price
+              type: string
+            sumPrice:
+              default: Sum price
+              type: string
+            numberOfPages:
+              description: "Use the placeholders {current} and {total} for the current\
+                \ page and the total number of pages respectively."
+              default: "{current} | {total}"
+              type: string
+        epcQrCode:
+          description: "The information for creating an EPC QR code. If this object\
+            \ is provided, a QR code will be printed on the invoice."
+          required:
+            - iban
+            - recipient
+          type: object
+          properties:
+            iban:
+              description: The international bank account number of the recipient
+              type: string
+            bic:
+              description: The bank identifier code of the recipient bank
+              type: string
+            recipient:
+              description: The recipients name
+              type: string
+            reference:
+              description: The payment reference
+              type: string
+            text:
+              description: The bank transfer text
+              type: string
+            message:
+              description: A user hint
+              type: string
+        swissQrInvoice:
+          description: "The information for creating a Swiss QR invoice. If this object\
+            \ is provided, a Swiss QR invioce code will be printed on the invoice.\
+            \ For more details see Swiss QR invoice documentation."
+          required:
+            - creditor
+          type: object
+          properties:
+            creditor:
+              $ref: '#/components/schemas/SwissQrInvoiceCreditor'
+            debtor:
+              $ref: '#/components/schemas/SwissQrInvoiceDebtor'
+            information:
+              description: Additional unstructured information.
+              type: string
+            structuredInformation:
+              description: Additional structured information.
+              type: string
+            reference:
+              description: The payment reference based either on ISO 11649 or on QR
+                reference.
+              type: string
+        currencyFormat:
+          description: "The currency format to be used. SYMBOL for the currency symbol\
+            \ e.g. €, CODE for the currency abbreviation e.g. EUR and NAME for the\
+            \ name of the currency which is translated using the 'locale' variable,\
+            \ e.g. Euro."
+          enum:
+            - SYMBOL
+            - CODE
+            - NAME
+          type: string
     SwissQrInvoicePayload:
       required:
         - creditor
       type: object
       properties:
         creditor:
-          required:
-            - iban
-            - name
-            - postalCode
-            - city
-          type: object
-          properties:
-            iban:
-              description: The international bank account number of the creditor
-              type: string
-            name:
-              description: The creditors name
-              type: string
-            street:
-              description: The creditors street
-              type: string
-            postalCode:
-              description: The creditors postal code
-              type: string
-            city:
-              description: The creditors city
-              type: string
-            country:
-              description: The creditors country
-              type: string
+          $ref: '#/components/schemas/SwissQrInvoiceCreditor'
         debtor:
-          required:
-            - name
-            - postalCode
-            - city
-          type: object
-          properties:
-            name:
-              description: The debtors name
-              type: string
-            street:
-              description: The debtors street
-              type: string
-            postalCode:
-              description: The debtors postal code
-              type: string
-            city:
-              description: The debtors city
-              type: string
-            country:
-              description: The debtors country
-              type: string
+          $ref: '#/components/schemas/SwissQrInvoiceDebtor'
         currency:
           description: The currency according to ISO 4217.
           default: CHF
@@ -1106,6 +1338,64 @@ components:
             - FR
             - IT
             - EN
+          type: string
+    SwissQrInvoiceCreditor:
+      required:
+        - iban
+        - name
+        - postalCode
+        - city
+      type: object
+      properties:
+        iban:
+          description: The international bank account number of the creditor
+          type: string
+        name:
+          description: The creditors name
+          maxLength: 70
+          type: string
+        street:
+          description: The creditors street
+          maxLength: 70
+          type: string
+        postalCode:
+          description: The creditors postal code
+          maxLength: 16
+          type: string
+        city:
+          description: The creditors city
+          maxLength: 35
+          type: string
+        country:
+          description: The creditors country
+          default: CH
+          type: string
+    SwissQrInvoiceDebtor:
+      required:
+        - name
+        - postalCode
+        - city
+      type: object
+      properties:
+        name:
+          description: The debtors name
+          maxLength: 70
+          type: string
+        street:
+          description: The debtors street
+          maxLength: 70
+          type: string
+        postalCode:
+          description: The debtors postal code
+          maxLength: 16
+          type: string
+        city:
+          description: The debtors city
+          maxLength: 35
+          type: string
+        country:
+          description: The debtors country
+          default: CH
           type: string
     ErrorMessage:
       required:
