@@ -119,6 +119,11 @@ public class APIstaxClientImpl implements APIstaxClient {
         return requestBinary("/v1/swiss-qr-invoice", payload, accept);
     }
 
+    @Override
+    public byte[] generateInvoicePdf(InvoicePayload payload) throws APIstaxException {
+        return requestBinary("/v1/invoice-pdf", payload, "application/pdf");
+    }
+
     private byte[] requestBinary(String path, Object body, String accept) {
         return request(path, body, accept, null, inputStream -> {
             try {

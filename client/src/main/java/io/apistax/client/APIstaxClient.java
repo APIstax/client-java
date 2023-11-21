@@ -126,6 +126,15 @@ public interface APIstaxClient {
      */
     byte[] generateSwissQrInvoice(SwissQrInvoicePayload payload, SwissQrInvoiceFormat format) throws APIstaxException;
 
+    /**
+     * Create a invoice PDF
+     *
+     * @param payload The invoice object to create a PDF from. (required)
+     * @return byte[]
+     * @throws APIstaxException if fails to make API call
+     */
+    byte[] generateInvoicePdf(InvoicePayload payload) throws APIstaxException;
+
     class Builder {
 
         private String apiKey;
