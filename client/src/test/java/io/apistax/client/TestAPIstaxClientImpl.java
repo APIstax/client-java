@@ -269,7 +269,7 @@ public class TestAPIstaxClientImpl {
                         .willReturn(response)
         );
 
-        var creditor = new SwissQrInvoicePayloadCreditor();
+        var creditor = new SwissQrInvoiceCreditor();
         creditor.setIban("CH07 3000 0017 3000 9700 0");
         creditor.setName("Schweizerisches Rotes Kreuz");
         creditor.setStreet("Postfach");
@@ -277,7 +277,7 @@ public class TestAPIstaxClientImpl {
         creditor.setCity("Bern");
         creditor.setCountry("CH");
 
-        var debtor = new SwissQrInvoicePayloadDebtor();
+        var debtor = new SwissQrInvoiceDebtor();
         debtor.setName("Max Mustermann");
         debtor.setStreet("Musterstraße 1");
         debtor.setPostalCode("3000");
@@ -336,7 +336,7 @@ public class TestAPIstaxClientImpl {
                         .willReturn(response)
         );
 
-        var creditor = new SwissQrInvoicePayloadCreditor();
+        var creditor = new SwissQrInvoiceCreditor();
         creditor.setIban("CH07 3000 0017 3000 9700 0");
         creditor.setName("Schweizerisches Rotes Kreuz");
         creditor.setStreet("Postfach");
@@ -344,7 +344,7 @@ public class TestAPIstaxClientImpl {
         creditor.setCity("Bern");
         creditor.setCountry("CH");
 
-        var debtor = new SwissQrInvoicePayloadDebtor();
+        var debtor = new SwissQrInvoiceDebtor();
         debtor.setName("Max Mustermann");
         debtor.setStreet("Musterstraße 1");
         debtor.setPostalCode("3000");
@@ -403,7 +403,7 @@ public class TestAPIstaxClientImpl {
                         .willReturn(response)
         );
 
-        var creditor = new SwissQrInvoicePayloadCreditor();
+        var creditor = new SwissQrInvoiceCreditor();
         creditor.setIban("CH07 3000 0017 3000 9700 0");
         creditor.setName("Schweizerisches Rotes Kreuz");
         creditor.setStreet("Postfach");
@@ -411,7 +411,7 @@ public class TestAPIstaxClientImpl {
         creditor.setCity("Bern");
         creditor.setCountry("CH");
 
-        var debtor = new SwissQrInvoicePayloadDebtor();
+        var debtor = new SwissQrInvoiceDebtor();
         debtor.setName("Max Mustermann");
         debtor.setStreet("Musterstraße 1");
         debtor.setPostalCode("3000");
@@ -470,7 +470,7 @@ public class TestAPIstaxClientImpl {
                         .willReturn(response)
         );
 
-        var creditor = new SwissQrInvoicePayloadCreditor();
+        var creditor = new SwissQrInvoiceCreditor();
         creditor.setIban("CH07 3000 0017 3000 9700 0");
         creditor.setName("Schweizerisches Rotes Kreuz");
         creditor.setStreet("Postfach");
@@ -478,7 +478,7 @@ public class TestAPIstaxClientImpl {
         creditor.setCity("Bern");
         creditor.setCountry("CH");
 
-        var debtor = new SwissQrInvoicePayloadDebtor();
+        var debtor = new SwissQrInvoiceDebtor();
         debtor.setName("Max Mustermann");
         debtor.setStreet("Musterstraße 1");
         debtor.setPostalCode("3000");
