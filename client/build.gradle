@@ -171,4 +171,5 @@ signing {
 
 compileJava.dependsOn tasks.openApiGenerate
 sourcesJar.dependsOn tasks.openApiGenerate
+compileTestJava.dependsOn tasks.jandex
 javadoc.dependsOn tasks.jandex
