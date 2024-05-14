@@ -71,7 +71,7 @@ public interface APIstaxClient {
     /**
      * Convert a known address to geo-coordinates
      *
-     * @param query A free-text address query. For example: \&quot;Heldenplatz, Wien\&quot; or \&quot;Wiedner Hauptstraße 32,
+     * @param query A free-text address query. For example: \&quot;Heldenplatz, Wien\&quot; or \&quot;Wiedner Hauptstra&szlig;e 32,
      *              1040 Wien\&quot; (required)
      * @return GeocodeResult
      * @throws APIstaxException if fails to make API call
