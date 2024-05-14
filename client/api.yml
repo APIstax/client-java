@@ -6,7 +6,7 @@ info:
   contact:
     name: APIstax Support
     email: support@apistax.io
-  version: 1.2.0
+  version: 1.3.1
 servers:
   - url: https://api.apistax.io/
 security:
@@ -24,6 +24,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/HtmlPayload'
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
         required: true
       responses:
         "200":
@@ -192,6 +196,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/EpcQrCodePayload'
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
         required: true
       responses:
         "200":
@@ -298,6 +306,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/VatVerificationPayload'
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
         required: true
       responses:
         "200":
@@ -415,6 +427,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GeocodeSearchPayload'
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
         required: true
       responses:
         "200":
@@ -544,6 +560,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/GeocodeReversePayload'
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
         required: true
       responses:
         "200":
@@ -663,6 +683,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/InvoicePayload'
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
         required: true
       responses:
         "200":
@@ -717,6 +741,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SwissQrInvoicePayload'
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
         required: true
       responses:
         "200":
@@ -1073,7 +1101,6 @@ components:
       type: string
     InvoicePayload:
       required:
-        - template
         - sender
         - recipient
         - items
@@ -1081,10 +1108,12 @@ components:
       properties:
         template:
           description: The invoice template
+          default: DEFAULT
           enum:
-            - ONE
-            - TWO
-            - THREE
+            - DEFAULT
+            - CLASSIC
+            - MODERN
+            - MINIMALISTIC
           type: string
         sender:
           description: The data of the invoice issuer
@@ -1263,7 +1292,7 @@ components:
               type: string
         swissQrInvoice:
           description: "The information for creating a Swiss QR invoice. If this object\
-            \ is provided, a Swiss QR invioce code will be printed on the invoice.\
+            \ is provided, a Swiss QR invoice code will be printed on the invoice.\
             \ For more details see Swiss QR invoice documentation."
           required:
             - creditor
@@ -1288,6 +1317,7 @@ components:
             \ e.g. €, CODE for the currency abbreviation e.g. EUR and NAME for the\
             \ name of the currency which is translated using the 'locale' variable,\
             \ e.g. Euro."
+          default: CODE
           enum:
             - SYMBOL
             - CODE
