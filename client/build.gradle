@@ -18,7 +18,7 @@ dependencies {
     implementation "org.openapitools:jackson-databind-nullable:0.2.6"
     implementation "io.mikael:urlbuilder:2.0.9"
 
-    testImplementation "org.wiremock:wiremock:3.5.4"
+    testImplementation "org.wiremock:wiremock:3.6.0"
     testImplementation "org.junit.jupiter:junit-jupiter-api:5.10.2"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.2"
 }
