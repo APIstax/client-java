@@ -36,6 +36,16 @@ test {
     useJUnitPlatform()
 }
 
+tasks.withType(JavaCompile) {
+    configure(options) {
+        options.encoding = 'UTF-8'
+    }
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
+}
+
 sourceSets {
     main {
         java {
