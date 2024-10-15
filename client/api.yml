@@ -6,9 +6,12 @@ info:
   contact:
     name: APIstax Support
     email: support@apistax.io
-  version: 1.3.1
+  license:
+    name: Copyright instant:solutions OG
+    url: https://instant-it.at
+  version: 1.4.0
 servers:
-  - url: https://api.apistax.io/
+  - url: https://api.apistax.io
 security:
   - ApiKeyHeader: []
 paths:
@@ -23,7 +26,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/HtmlPayload'
+              $ref: "#/components/schemas/HtmlPayload"
           application/octet-stream:
             schema:
               format: binary
@@ -31,45 +34,17 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
-          content:
-            application/pdf:
-              schema:
-                format: binary
-                type: string
+          $ref: "#/components/responses/HtmlToPdf"
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
   /v1/epc-qr-code:
     get:
       tags:
@@ -146,45 +121,17 @@ paths:
             type: string
       responses:
         "200":
-          description: OK
-          content:
-            image/png:
-              schema:
-                format: binary
-                type: string
+          $ref: "#/components/responses/EpcQrCode"
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
     post:
       tags:
         - EPC QR Code
@@ -195,7 +142,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EpcQrCodePayload'
+              $ref: "#/components/schemas/EpcQrCodePayload"
           application/octet-stream:
             schema:
               format: binary
@@ -203,45 +150,17 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
-          content:
-            image/png:
-              schema:
-                format: binary
-                type: string
+          $ref: "#/components/responses/EpcQrCode"
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
   /v1/vat-verification:
     get:
       tags:
@@ -257,44 +176,17 @@ paths:
             type: string
       responses:
         "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VatVerificationResult'
+          $ref: "#/components/responses/VatVerificationResult"
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
     post:
       tags:
         - Verify VAT ID
@@ -305,7 +197,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/VatVerificationPayload'
+              $ref: "#/components/schemas/VatVerificationPayload"
           application/octet-stream:
             schema:
               format: binary
@@ -313,44 +205,17 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VatVerificationResult'
+          $ref: "#/components/responses/VatVerificationResult"
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
   /v1/geocode/search:
     get:
       tags:
@@ -375,47 +240,20 @@ paths:
             type: string
       responses:
         "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GeocodeResult'
+          $ref: "#/components/responses/GeocodeResult"
         "204":
           description: An empty response if no entry could be found for the specified
             query.
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
     post:
       tags:
         - Geocoding
@@ -426,7 +264,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GeocodeSearchPayload'
+              $ref: "#/components/schemas/GeocodeSearchPayload"
           application/octet-stream:
             schema:
               format: binary
@@ -434,47 +272,20 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GeocodeResult'
+          $ref: "#/components/responses/GeocodeResult"
         "204":
           description: An empty response if no entry could be found for the specified
             query.
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
   /v1/geocode/reverse:
     get:
       tags:
@@ -508,47 +319,20 @@ paths:
             type: string
       responses:
         "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GeocodeResult'
+          $ref: "#/components/responses/GeocodeResult"
         "204":
           description: An empty response if no entry could be found for the specified
             coordinates.
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
     post:
       tags:
         - Reverse Geocoding
@@ -559,7 +343,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/GeocodeReversePayload'
+              $ref: "#/components/schemas/GeocodeReversePayload"
           application/octet-stream:
             schema:
               format: binary
@@ -567,47 +351,20 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GeocodeResult'
+          $ref: "#/components/responses/GeocodeResult"
         "204":
           description: An empty response if no entry could be found for the specified
             coordinates.
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
   /v1/indexes/{index}:
     get:
       tags:
@@ -622,67 +379,40 @@ paths:
             indexes can be found in the documentation
           required: true
           schema:
-            $ref: '#/components/schemas/Index'
+            $ref: "#/components/schemas/Index"
         - name: frequency
           in: query
           description: The frequency in which the index is published
           required: false
           schema:
-            $ref: '#/components/schemas/IndexFrequency'
+            $ref: "#/components/schemas/IndexFrequency"
       responses:
         "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IndexResult'
+          $ref: "#/components/responses/IndexResult"
         "204":
           description: An empty response if specified index is not available.
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
   /v1/invoice-pdf:
     post:
       tags:
         - Invoice PDF
       summary: Create a invoice PDF
-      operationId: createInvoicePDF
+      operationId: createInvoicePDFV1
       requestBody:
         description: The invoice object to create a PDF from.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/InvoicePayload'
+              $ref: "#/components/schemas/InvoicePayloadV1"
           application/octet-stream:
             schema:
               format: binary
@@ -690,45 +420,18 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
-          content:
-            application/pdf:
-              schema:
-                format: binary
-                type: string
+          $ref: "#/components/responses/InvoicePdf"
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
+      deprecated: true
   /v1/swiss-qr-invoice:
     post:
       tags:
@@ -740,7 +443,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SwissQrInvoicePayload'
+              $ref: "#/components/schemas/SwissQrInvoicePayload"
           application/octet-stream:
             schema:
               format: binary
@@ -748,57 +451,47 @@ paths:
         required: true
       responses:
         "200":
-          description: OK
-          content:
-            image/svg+xml:
-              schema:
-                format: binary
-                type: string
-            application/svg+xml:
-              schema:
-                format: binary
-                type: string
-            image/png:
-              schema:
-                format: binary
-                type: string
-            application/pdf:
-              schema:
-                format: binary
-                type: string
+          $ref: "#/components/responses/SwissQrInvoice"
         "402":
-          description: Your remaining quota is not sufficient to perform the request.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/PaymentRequired"
         "403":
-          description: Access is not allowed. The API key may be missing from the
-            request or the API key may have been revoked.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/Forbidden"
         "406":
-          description: A required parameter is missing or in a wrong format.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/NotAcceptable"
         "500":
-          description: An unexpected error occurred on the server side. Please retry
-            the request at a later time.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/InternalServerError"
         "503":
-          description: "The endpoint is temporarily unavailable, either due to planned\
-            \ maintenance or outage. Please retry the request at a later time."
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorMessage'
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v2/invoice-pdf:
+    post:
+      tags:
+        - Invoice PDF
+      summary: Create a invoice PDF
+      operationId: createInvoicePDFV2
+      requestBody:
+        description: The invoice object to create a PDF from.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoicePayload"
+          application/octet-stream:
+            schema:
+              format: binary
+              type: string
+        required: true
+      responses:
+        "200":
+          $ref: "#/components/responses/InvoicePdf"
+        "402":
+          $ref: "#/components/responses/PaymentRequired"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
 components:
   schemas:
     HtmlPayload:
@@ -853,6 +546,16 @@ components:
           description: Print background graphics
           default: false
           type: boolean
+    ErrorMessage:
+      required:
+        - messages
+      type: object
+      properties:
+        messages:
+          description: A list of error messages
+          type: array
+          items:
+            type: string
     EpcQrCodePayload:
       required:
         - iban
@@ -896,14 +599,6 @@ components:
         message:
           description: A user hint
           type: string
-    VatVerificationPayload:
-      required:
-        - vatId
-      type: object
-      properties:
-        vatId:
-          description: The VAT ID to check.
-          type: string
     VatVerificationResult:
       required:
         - valid
@@ -921,40 +616,13 @@ components:
         countryCode:
           description: The company's country based on ISO 3166-1 alpha-2
           type: string
-    GeocodeSearchPayload:
+    VatVerificationPayload:
       required:
-        - query
+        - vatId
       type: object
       properties:
-        query:
-          description: "A free-text address query. For example: \"Heldenplatz, Wien\"\
-            \ or \"Wiedner Hauptstraße 32, 1040 Wien\""
-          type: string
-        language:
-          description: "The language used for result localization based on ISO 639-1.\
-            \ For example: \"en\" or \"fr\""
-          default: en
-          type: string
-    GeocodeReversePayload:
-      required:
-        - latitude
-        - longitude
-      type: object
-      properties:
-        latitude:
-          format: double
-          description: The latitude coordinate of a point to search for. For example
-            "48.20661"
-          type: number
-        longitude:
-          format: double
-          description: The longitude coordinate of a point to search for. For example
-            "16.36301"
-          type: number
-        language:
-          description: "The language used for result localization based on ISO 639-1.\
-            \ For example: \"en\" or \"fr\""
-          default: en
+        vatId:
+          description: The VAT ID to check.
           type: string
     GeocodeResult:
       required:
@@ -1002,50 +670,41 @@ components:
               description: A two letter country code based on ISO 3166-1 alpha-2.
                 For example "AT"
               type: string
-    IndexResult:
+    GeocodeSearchPayload:
       required:
-        - id
-        - name
-        - frequency
+        - query
       type: object
       properties:
-        id:
-          description: The index name
+        query:
+          description: "A free-text address query. For example: \"Heldenplatz, Wien\"\
+            \ or \"Wiedner Hauptstraße 32, 1040 Wien\""
           type: string
-        name:
-          description: The official name of the index
+        language:
+          description: "The language used for result localization based on ISO 639-1.\
+            \ For example: \"en\" or \"fr\""
+          default: en
           type: string
-        source:
-          description: The data source of the index
-          type: string
-        frequency:
-          $ref: '#/components/schemas/IndexFrequency'
-        values:
-          description: The index series in ascending order
-          type: array
-          items:
-            $ref: '#/components/schemas/IndexValue'
-    IndexValue:
+    GeocodeReversePayload:
       required:
-        - year
-        - value
+        - latitude
+        - longitude
       type: object
       properties:
-        year:
-          description: The year in the index series which the value represents
-          type: integer
-        month:
-          description: The month in the index series which the value represents
-          type: integer
-        value:
-          format: float
-          description: The index value
+        latitude:
+          format: double
+          description: The latitude coordinate of a point to search for. For example
+            "48.20661"
           type: number
-    IndexFrequency:
-      enum:
-        - MONTHLY
-        - YEARLY
-      type: string
+        longitude:
+          format: double
+          description: The longitude coordinate of a point to search for. For example
+            "16.36301"
+          type: number
+        language:
+          description: "The language used for result localization based on ISO 639-1.\
+            \ For example: \"en\" or \"fr\""
+          default: en
+          type: string
     Index:
       enum:
         - at-cpi-1
@@ -1099,7 +758,109 @@ components:
         - eea-eu-hicp-2015
         - eu-eu-hicp-2015
       type: string
-    InvoicePayload:
+    IndexFrequency:
+      enum:
+        - MONTHLY
+        - YEARLY
+      type: string
+    IndexValue:
+      required:
+        - year
+        - value
+      type: object
+      properties:
+        year:
+          description: The year in the index series which the value represents
+          type: integer
+        month:
+          description: The month in the index series which the value represents
+          type: integer
+        value:
+          format: float
+          description: The index value
+          type: number
+    IndexResult:
+      required:
+        - id
+        - name
+        - frequency
+      type: object
+      properties:
+        id:
+          description: The index name
+          type: string
+        name:
+          description: The official name of the index
+          type: string
+        source:
+          description: The data source of the index
+          type: string
+        frequency:
+          $ref: "#/components/schemas/IndexFrequency"
+        values:
+          description: The index series in ascending order
+          type: array
+          items:
+            $ref: "#/components/schemas/IndexValue"
+    SwissQrInvoiceCreditor:
+      required:
+        - iban
+        - name
+        - postalCode
+        - city
+      type: object
+      properties:
+        iban:
+          description: The international bank account number of the creditor
+          type: string
+        name:
+          description: The creditors name
+          maxLength: 70
+          type: string
+        street:
+          description: The creditors street
+          maxLength: 70
+          type: string
+        postalCode:
+          description: The creditors postal code
+          maxLength: 16
+          type: string
+        city:
+          description: The creditors city
+          maxLength: 35
+          type: string
+        country:
+          description: The creditors country
+          default: CH
+          type: string
+    SwissQrInvoiceDebtor:
+      required:
+        - name
+        - postalCode
+        - city
+      type: object
+      properties:
+        name:
+          description: The debtors name
+          maxLength: 70
+          type: string
+        street:
+          description: The debtors street
+          maxLength: 70
+          type: string
+        postalCode:
+          description: The debtors postal code
+          maxLength: 16
+          type: string
+        city:
+          description: The debtors city
+          maxLength: 35
+          type: string
+        country:
+          description: The debtors country
+          default: CH
+          type: string
+    InvoicePayloadV1:
       required:
         - sender
         - recipient
@@ -1299,9 +1060,9 @@ components:
           type: object
           properties:
             creditor:
-              $ref: '#/components/schemas/SwissQrInvoiceCreditor'
+              $ref: "#/components/schemas/SwissQrInvoiceCreditor"
             debtor:
-              $ref: '#/components/schemas/SwissQrInvoiceDebtor'
+              $ref: "#/components/schemas/SwissQrInvoiceDebtor"
             information:
               description: Additional unstructured information.
               type: string
@@ -1329,9 +1090,9 @@ components:
       type: object
       properties:
         creditor:
-          $ref: '#/components/schemas/SwissQrInvoiceCreditor'
+          $ref: "#/components/schemas/SwissQrInvoiceCreditor"
         debtor:
-          $ref: '#/components/schemas/SwissQrInvoiceDebtor'
+          $ref: "#/components/schemas/SwissQrInvoiceDebtor"
         currency:
           description: The currency according to ISO 4217.
           default: CHF
@@ -1369,73 +1130,359 @@ components:
             - IT
             - EN
           type: string
-    SwissQrInvoiceCreditor:
+    InvoiceParty:
       required:
-        - iban
         - name
-        - postalCode
-        - city
       type: object
       properties:
+        name:
+          description: The company name
+          type: string
+        contact:
+          description: The name of a contact person in the company
+          type: string
+        street:
+          description: The street of the company headquarters
+          type: string
+        postalCode:
+          description: The postal code of the company headquarters
+          type: string
+        city:
+          description: The city of the company headquarters
+          type: string
+        country:
+          description: The country of the company headquarters
+          type: string
+        vatNumber:
+          description: The company's VAT number
+          type: string
         iban:
-          description: The international bank account number of the creditor
+          description: The international bank account number of the company.
           type: string
-        name:
-          description: The creditors name
-          maxLength: 70
+        bic:
+          description: The bank identifier code of the company
           type: string
-        street:
-          description: The creditors street
-          maxLength: 70
-          type: string
-        postalCode:
-          description: The creditors postal code
-          maxLength: 16
-          type: string
-        city:
-          description: The creditors city
-          maxLength: 35
-          type: string
-        country:
-          description: The creditors country
-          default: CH
-          type: string
-    SwissQrInvoiceDebtor:
-      required:
-        - name
-        - postalCode
-        - city
+    InvoiceMetadata:
       type: object
       properties:
-        name:
-          description: The debtors name
-          maxLength: 70
+        issueDate:
+          description: "The date of issue of the invoice. The value is used for the\
+            \ ZUGFerd e-invoice. If the value is missing, the current date is used."
           type: string
-        street:
-          description: The debtors street
-          maxLength: 70
+        dueDate:
+          description: The due date of the invoice. The value is used for the ZUGFerd
+            e-invoice.
           type: string
-        postalCode:
-          description: The debtors postal code
-          maxLength: 16
+        number:
+          description: The invoice number of the invoice. The value is used for the
+            ZUGFerd e-invoice.
           type: string
-        city:
-          description: The debtors city
-          maxLength: 35
-          type: string
-        country:
-          description: The debtors country
-          default: CH
-          type: string
-    ErrorMessage:
+    InvoicePayload:
       required:
-        - messages
+        - sender
+        - recipient
+        - items
       type: object
       properties:
-        messages:
-          description: A list of error messages
+        template:
+          description: The invoice template
+          default: DEFAULT
+          enum:
+            - DEFAULT
+            - CLASSIC
+            - MODERN
+            - MINIMALISTIC
+          type: string
+        sender:
+          $ref: "#/components/schemas/InvoiceParty"
+        recipient:
+          $ref: "#/components/schemas/InvoiceParty"
+        logo:
+          description: The logo of the invoice issuer encoded as base64.
+          type: string
+        locale:
+          description: The country or language according to which the values are to
+            be formatted.
+          default: de-AT
+          type: string
+        currency:
+          description: The currency according to ISO 4217
+          default: EUR
+          type: string
+        items:
+          description: The list of items that are to be invoiced.
           type: array
           items:
+            description: "A single invoice item. Either unitPrice or sumPrice must\
+              \ be set. If the unitPrice field is set, the sumPrice is calculated."
+            required:
+              - description
+            type: object
+            properties:
+              description:
+                description: The description of the invoice item
+                type: string
+              amount:
+                format: double
+                description: The amount of the invoice item
+                default: 1
+                type: number
+              unit:
+                description: "The optional unit, for example, kilogram or piece."
+                type: string
+              unitPrice:
+                format: double
+                description: The price per unit
+                type: number
+              sumPrice:
+                format: double
+                description: "The total price of the invoice item. If the field is\
+                  \ not set, it is calculated using the unit price and amount."
+                type: number
+              tax:
+                format: double
+                description: The value added tax in percent
+                default: 0
+                type: number
+        footerItems:
+          description: "The list of footer items. An informative element that is shown\
+            \ in the footer of the invoice, for example, to display information about\
+            \ the company."
+          type: array
+          items:
+            description: "An informative element that is shown in the footer of the\
+              \ invoice, for example, to display information about the company."
+            type: object
+            properties:
+              title:
+                description: The item title
+                type: string
+              values:
+                description: A list of values
+                type: array
+                items:
+                  type: string
+        contextItems:
+          description: "The list of context items. An informative element that is\
+            \ shown in the content of the invoice, for example to display detailed\
+            \ information such as the invoice number for the respective invoice."
+          type: array
+          items:
+            description: "An informative element that is shown in the content of the\
+              \ invoice, for example to display detailed information such as the invoice\
+              \ number for the respective invoice."
+            type: object
+            properties:
+              title:
+                description: The item title
+                type: string
+              value:
+                description: The item value
+                type: string
+        feeTaxItems:
+          description: "The list of fee and tax items. An element to add any tax and/or\
+            \ fees in addition to the invoice items. When using the 'percent' field,\
+            \ the value is calculated from the sum of the invoice items including\
+            \ any previous taxes and fees. The values are calculated in the order\
+            \ passed."
+          type: array
+          items:
+            description: "An element to add any tax and/or fees in addition to the\
+              \ invoice items. When using the 'percent' field, the value is calculated\
+              \ from the sum of the invoice items including any previous taxes and\
+              \ fees. The values are calculated in the order passed."
+            required:
+              - title
+            type: object
+            properties:
+              title:
+                description: The element title for example "Dunning charge".
+                type: string
+              percent:
+                format: float
+                description: The item percent. The resulting value is calculated from
+                  the sum of the invoice items including any previous taxes and fees.
+                  The values are calculated in the order passed.
+                type: number
+              value:
+                format: double
+                description: The item value
+                type: number
+        notice:
+          description: A note that is printed at the end of the invoice.
+          type: string
+        labels:
+          description: 'This object can be used to overwrite standard invoice texts. '
+          type: object
+          properties:
+            invoice:
+              default: Invoice
+              type: string
+            subtotal:
+              default: Subtotal
+              type: string
+            total:
+              default: Total
+              type: string
+            amount:
+              default: Amount
+              type: string
+            description:
+              default: Description
+              type: string
+            unitPrice:
+              default: Unit price
+              type: string
+            sumPrice:
+              default: Sum price
+              type: string
+            numberOfPages:
+              description: "Use the placeholders {current} and {total} for the current\
+                \ page and the total number of pages respectively."
+              default: "{current} | {total}"
+              type: string
+            vat:
+              default: VAT
+              type: string
+        epcQrCode:
+          description: "The information for creating an EPC QR code. If this object\
+            \ is provided, a QR code will be printed on the invoice."
+          type: object
+          properties:
+            reference:
+              description: The payment reference
+              type: string
+            text:
+              description: The bank transfer text
+              type: string
+            message:
+              description: A user hint
+              type: string
+        swissQrInvoice:
+          description: "The information for creating a Swiss QR invoice. If this object\
+            \ is provided, a Swiss QR invoice code will be printed on the invoice.\
+            \ For more details see Swiss QR invoice documentation."
+          type: object
+          properties:
+            information:
+              description: Additional unstructured information.
+              type: string
+            structuredInformation:
+              description: Additional structured information.
+              type: string
+            reference:
+              description: The payment reference based either on ISO 11649 or on QR
+                reference.
+              type: string
+        currencyFormat:
+          description: "The currency format to be used. SYMBOL for the currency symbol\
+            \ e.g. €, CODE for the currency abbreviation e.g. EUR and NAME for the\
+            \ name of the currency which is translated using the 'locale' variable,\
+            \ e.g. Euro."
+          default: CODE
+          enum:
+            - SYMBOL
+            - CODE
+            - NAME
+          type: string
+        metadata:
+          $ref: "#/components/schemas/InvoiceMetadata"
+        zugferdDisabled:
+          description: A flag to deactivate the creation of the ZUGFerd invoice.
+          default: false
+          type: boolean
+  responses:
+    HtmlToPdf:
+      description: The generated PDF file
+      content:
+        application/pdf:
+          schema:
+            format: byte
+            type: string
+    PaymentRequired:
+      description: Your remaining quota is not sufficient to perform the request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessage"
+    Forbidden:
+      description: Access is not allowed. The API key may be missing from the request
+        or the API key may have been revoked.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessage"
+    NotAcceptable:
+      description: A required parameter is missing or in a wrong format.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessage"
+    InternalServerError:
+      description: An unexpected error occurred on the server side. Please retry the
+        request at a later time.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessage"
+    ServiceUnavailable:
+      description: "The endpoint is temporarily unavailable, either due to planned\
+        \ maintenance or outage. Please retry the request at a later time."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorMessage"
+    EpcQrCode:
+      description: The generated QR code as PNG
+      content:
+        image/png:
+          schema:
+            format: byte
+            type: string
+    VatVerificationResult:
+      description: The validity of the VAT ID and additional information about the
+        company
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/VatVerificationResult"
+    GeocodeResult:
+      description: The search result
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/GeocodeResult"
+    IndexResult:
+      description: The index series and associated metadata
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/IndexResult"
+    InvoicePdf:
+      description: The generated PDF file
+      content:
+        application/pdf:
+          schema:
+            format: byte
+            type: string
+    SwissQrInvoice:
+      description: The generated Swiss QR invoice in the requested file format.
+      content:
+        image/svg+xml:
+          schema:
+            format: binary
+            type: string
+        application/svg+xml:
+          schema:
+            format: binary
+            type: string
+        image/png:
+          schema:
+            format: binary
+            type: string
+        application/pdf:
+          schema:
+            format: binary
             type: string
   securitySchemes:
     ApiKeyHeader:
