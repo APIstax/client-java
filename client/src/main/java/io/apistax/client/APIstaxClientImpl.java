@@ -121,6 +121,12 @@ public class APIstaxClientImpl implements APIstaxClient {
 
     @Override
     public byte[] generateInvoicePdf(InvoicePayload payload) throws APIstaxException {
+        return requestBinary("/v2/invoice-pdf", payload, "application/pdf");
+    }
+
+    @Override
+    @Deprecated
+    public byte[] generateInvoicePdfV1(InvoicePayloadV1 payload) throws APIstaxException {
         return requestBinary("/v1/invoice-pdf", payload, "application/pdf");
     }
 

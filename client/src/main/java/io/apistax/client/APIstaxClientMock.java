@@ -156,4 +156,9 @@ public class APIstaxClientMock implements APIstaxClient {
     public byte[] generateInvoicePdf(InvoicePayload payload) throws APIstaxException {
         return "INVOICE_PDF".getBytes(StandardCharsets.UTF_8);
     }
+
+    @Override
+    public byte[] generateInvoicePdfV1(InvoicePayloadV1 payload) throws APIstaxException {
+        return "INVOICE_PDF_V1".getBytes(StandardCharsets.UTF_8);
+    }
 }
