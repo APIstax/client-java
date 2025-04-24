@@ -196,7 +196,7 @@ public class APIstaxClientImpl implements APIstaxClient {
             requestBuilder.uri(builder.toUri());
             requestBuilder.header("Content-Type", "application/json");
             requestBuilder.header("Authorization", "Bearer " + apiKey);
-            requestBuilder.header("User-Agent", "apistax-java-client");
+            requestBuilder.header("User-Agent", "apistax-java-client " + BuildConfig.VERSION);
 
             if(accept != null) {
                 requestBuilder.header("Accept", accept);

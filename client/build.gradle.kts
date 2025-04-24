@@ -7,6 +7,7 @@ plugins {
     id("signing")
     id("org.openapi.generator") version "7.5.0"
     id("org.kordamp.gradle.jandex") version "2.0.0"
+    id("com.github.gmazzo.buildconfig") version "5.6.2"
 }
 
 version = "1.5.0"
@@ -24,6 +25,13 @@ dependencies {
     testImplementation("org.wiremock:wiremock:3.5.4")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+}
+
+buildConfig {
+    packageName = "io.apistax.client"
+    useJavaOutput()
+
+    buildConfigField<String>("VERSION", version.toString())
 }
 
 java {
