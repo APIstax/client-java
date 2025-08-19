@@ -10,7 +10,7 @@ plugins {
     id("com.github.gmazzo.buildconfig") version "5.6.2"
 }
 
-version = "1.5.1"
+version = "1.6.0"
 
 dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
