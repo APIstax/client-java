@@ -93,7 +93,7 @@ openApiGenerate {
         "models" to "",
         "modelDocs" to "false",
         "modelTests" to "false",
-        "supportingFiles" to "false"
+        "supportingFiles" to ""
     )
 
     configOptions = mapOf(
