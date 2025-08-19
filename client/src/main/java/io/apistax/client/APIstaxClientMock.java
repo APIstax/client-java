@@ -158,6 +158,11 @@ public class APIstaxClientMock implements APIstaxClient {
     }
 
     @Override
+    public byte[] generateBarcode(BarcodePayload payload) throws APIstaxException {
+        return "BARCODE".getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Override
     public byte[] generateInvoicePdfV1(InvoicePayloadV1 payload) throws APIstaxException {
         return "INVOICE_PDF_V1".getBytes(StandardCharsets.UTF_8);
     }

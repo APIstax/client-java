@@ -100,7 +100,7 @@ public interface APIstaxClient {
     /**
      * List various, always up-to-date indexes like consumer price index for many countries
      *
-     * @param index The identification of the index. A complete list of available indexes can be found in the documentation (required)
+     * @param index     The identification of the index. A complete list of available indexes can be found in the documentation (required)
      * @param frequency The frequency in which the index is published (optional)
      * @return IndexResult
      * @throws APIstaxException if fails to make API call
@@ -120,7 +120,7 @@ public interface APIstaxClient {
      * Generate a valid Swiss QR invoice
      *
      * @param payload The payload to generate QR invoice from (required)
-     * @param format The format to generate. Defaults to PDF
+     * @param format  The format to generate. Defaults to PDF
      * @return byte[]
      * @throws APIstaxException if fails to make API call
      */
@@ -134,6 +134,15 @@ public interface APIstaxClient {
      * @throws APIstaxException if fails to make API call
      */
     byte[] generateInvoicePdf(InvoicePayload payload) throws APIstaxException;
+
+    /**
+     * Generate a barcode
+     *
+     * @param payload The barcode payload to generate
+     * @return byte[]
+     * @throws APIstaxException if fails to make API call
+     */
+    byte[] generateBarcode(BarcodePayload payload) throws APIstaxException;
 
     /**
      * Create a invoice PDF
