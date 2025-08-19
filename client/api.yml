@@ -1,7 +1,9 @@
 ---
-openapi: 3.0.3
+openapi: 3.1.0
 info:
+  version: 1.6.0
   title: APIstax
+  summary: Secure and reliable APIs
   termsOfService: https://apistax.io/terms-of-use
   contact:
     name: APIstax Support
@@ -9,7 +11,6 @@ info:
   license:
     name: Copyright instant:solutions OG
     url: https://instant-it.at
-  version: 1.4.0
 servers:
   - url: https://api.apistax.io
 security:
@@ -17,24 +18,25 @@ security:
 paths:
   /v1/html-to-pdf:
     post:
-      tags:
-        - HTML to PDF
       summary: Convert HTML to PDF
       operationId: convertHtmlToPdf
+      tags:
+        - HTML to PDF
       requestBody:
         description: HTML payload to convert
+        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/HtmlPayload"
           application/octet-stream:
             schema:
-              format: binary
               type: string
-        required: true
+              format: binary
       responses:
         "200":
           $ref: "#/components/responses/HtmlToPdf"
+          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -46,82 +48,26 @@ paths:
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
   /v1/epc-qr-code:
-    get:
+    post:
+      summary: Generate a valid EPC QR Code
+      operationId: generateEpcQrCodeJson
       tags:
         - EPC QR Code
-      summary: Generate a valid EPC QR Code
-      operationId: generateEpcQrCode
-      parameters:
-        - name: bic
-          in: query
-          description: The bank identifier code of the recipient bank
-          required: false
-          schema:
-            type: string
-        - name: iban
-          in: query
-          description: The international bank account number of the recipient
-          required: true
-          schema:
-            type: string
-        - name: recipient
-          in: query
-          description: The recipients name
-          required: true
-          schema:
-            type: string
-        - name: currency
-          in: query
-          description: The currency according to ISO 4217
-          required: false
-          schema:
-            default: EUR
-            type: string
-        - name: amount
-          in: query
-          description: The amount with a maximum of two decimal places
-          required: false
-          schema:
-            format: float
-            type: number
-        - name: reference
-          in: query
-          description: The payment reference
-          required: false
-          schema:
-            type: string
-        - name: text
-          in: query
-          description: The bank transfer text
-          required: false
-          schema:
-            type: string
-        - name: size
-          in: query
-          description: The size of the QR code in pixels
-          required: false
-          schema:
-            format: int32
-            default: 300
-            maximum: 2000
-            minimum: 100
-            type: integer
-        - name: frame
-          in: query
-          description: Draw a frame around the QR code
-          required: false
-          schema:
-            default: false
-            type: boolean
-        - name: message
-          in: query
-          description: A user hint
-          required: false
-          schema:
-            type: string
+      requestBody:
+        description: QR Code payload to generate
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EpcQrCodePayload"
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
       responses:
         "200":
           $ref: "#/components/responses/EpcQrCode"
+          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -132,25 +78,93 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
-    post:
+    get:
+      summary: Generate a valid EPC QR Code
+      operationId: generateEpcQrCode
       tags:
         - EPC QR Code
-      summary: Generate a valid EPC QR Code
-      operationId: generateEpcQrCodeJson
-      requestBody:
-        description: QR Code payload to generate
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/EpcQrCodePayload"
-          application/octet-stream:
-            schema:
-              format: binary
-              type: string
-        required: true
+      parameters:
+        - name: bic
+          description: The bank identifier code of the recipient bank
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: iban
+          description: The international bank account number of the recipient
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: recipient
+          description: The recipients name
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: currency
+          description: The currency according to ISO 4217
+          in: query
+          required: false
+          schema:
+            type: string
+            default: EUR
+        - name: amount
+          description: The amount with a maximum of two decimal places
+          in: query
+          required: false
+          schema:
+            type: number
+            format: float
+        - name: reference
+          description: The payment reference
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: text
+          description: The bank transfer text
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: size
+          description: The size of the QR code in pixels
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 300
+            maximum: 2000
+            minimum: 100
+        - name: frame
+          description: Draw a frame around the QR code
+          in: query
+          required: false
+          schema:
+            type: boolean
+            default: false
+        - name: message
+          description: A user hint
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: version
+          description: The version in which the QR code is to be generated
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 2
+            maximum: 2
+            minimum: 1
       responses:
         "200":
           $ref: "#/components/responses/EpcQrCode"
+          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -162,21 +176,26 @@ paths:
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
   /v1/vat-verification:
-    get:
+    post:
+      summary: Verify a companies VAT ID if it is valid
+      operationId: verifyVatIdJson
       tags:
         - Verify VAT ID
-      summary: Verify a companies VAT ID if it is valid
-      operationId: verifyVatId
-      parameters:
-        - name: vatId
-          in: query
-          description: The VAT ID to check.
-          required: true
-          schema:
-            type: string
+      requestBody:
+        description: VAT ID payload to verify
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VatVerificationPayload"
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
       responses:
         "200":
           $ref: "#/components/responses/VatVerificationResult"
+          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -187,25 +206,22 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
-    post:
+    get:
+      summary: Verify a companies VAT ID if it is valid
+      operationId: verifyVatId
       tags:
         - Verify VAT ID
-      summary: Verify a companies VAT ID if it is valid
-      operationId: verifyVatIdJson
-      requestBody:
-        description: VAT ID payload to verify
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/VatVerificationPayload"
-          application/octet-stream:
-            schema:
-              format: binary
-              type: string
-        required: true
+      parameters:
+        - name: vatId
+          in: query
+          required: true
+          description: The VAT ID to check.
+          schema:
+            type: string
       responses:
         "200":
           $ref: "#/components/responses/VatVerificationResult"
+          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -217,30 +233,26 @@ paths:
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
   /v1/geocode/search:
-    get:
+    post:
+      summary: Convert a known address to geo-coordinates
+      operationId: geocodeSearchJson
       tags:
         - Geocoding
-      summary: Convert a known address to geo-coordinates
-      operationId: geocodeSearch
-      parameters:
-        - name: query
-          in: query
-          description: "A free-text address query. For example: \"Heldenplatz, Wien\"\
-          \ or \"Wiedner Hauptstraße 32, 1040 Wien\""
-          required: true
-          schema:
-            type: string
-        - name: language
-          in: query
-          description: "The language used for result localization based on ISO 639-1.\
-          \ For example: \"en\" or \"fr\""
-          required: false
-          schema:
-            default: en
-            type: string
+      requestBody:
+        description: Query payload to search for
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeocodeSearchPayload"
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
       responses:
         "200":
           $ref: "#/components/responses/GeocodeResult"
+          description: OK
         "204":
           description: An empty response if no entry could be found for the specified
             query.
@@ -254,25 +266,31 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
-    post:
+    get:
+      summary: Convert a known address to geo-coordinates
+      operationId: geocodeSearch
       tags:
         - Geocoding
-      summary: Convert a known address to geo-coordinates
-      operationId: geocodeSearchJson
-      requestBody:
-        description: Query payload to search for
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GeocodeSearchPayload"
-          application/octet-stream:
-            schema:
-              format: binary
-              type: string
-        required: true
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: "A free-text address query. For example: \"Heldenplatz, Wien\"\
+          \ or \"Wiedner Hauptstraße 32, 1040 Wien\""
+          schema:
+            type: string
+        - name: language
+          in: query
+          required: false
+          description: "The language used for result localization based on ISO 639-1.\
+          \ For example: \"en\" or \"fr\""
+          schema:
+            type: string
+            default: en
       responses:
         "200":
           $ref: "#/components/responses/GeocodeResult"
+          description: OK
         "204":
           description: An empty response if no entry could be found for the specified
             query.
@@ -287,39 +305,26 @@ paths:
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
   /v1/geocode/reverse:
-    get:
+    post:
+      summary: Convert geo-coordinates to a postal address
+      operationId: geocodeReverseJson
       tags:
         - Reverse Geocoding
-      summary: Convert geo-coordinates to a postal address
-      operationId: geocodeReverse
-      parameters:
-        - name: latitude
-          in: query
-          description: The latitude coordinate of a point to search for. For example
-            "48.20661"
-          required: true
-          schema:
-            format: double
-            type: number
-        - name: longitude
-          in: query
-          description: The longitude coordinate of a point to search for. For example
-            "16.36301"
-          required: true
-          schema:
-            format: double
-            type: number
-        - name: language
-          in: query
-          description: "The language used for result localization based on ISO 639-1.\
-          \ For example: \"en\" or \"fr\""
-          required: false
-          schema:
-            default: en
-            type: string
+      requestBody:
+        description: Coordinates payload to search for
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeocodeReversePayload"
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
       responses:
         "200":
           $ref: "#/components/responses/GeocodeResult"
+          description: OK
         "204":
           description: An empty response if no entry could be found for the specified
             coordinates.
@@ -333,25 +338,40 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
-    post:
+    get:
+      summary: Convert geo-coordinates to a postal address
+      operationId: geocodeReverse
       tags:
         - Reverse Geocoding
-      summary: Convert geo-coordinates to a postal address
-      operationId: geocodeReverseJson
-      requestBody:
-        description: Coordinates payload to search for
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/GeocodeReversePayload"
-          application/octet-stream:
-            schema:
-              format: binary
-              type: string
-        required: true
+      parameters:
+        - name: latitude
+          in: query
+          required: true
+          description: The latitude coordinate of a point to search for. For example
+            "48.20661"
+          schema:
+            type: number
+            format: double
+        - name: longitude
+          in: query
+          required: true
+          description: The longitude coordinate of a point to search for. For example
+            "16.36301"
+          schema:
+            type: number
+            format: double
+        - name: language
+          in: query
+          required: false
+          description: "The language used for result localization based on ISO 639-1.\
+          \ For example: \"en\" or \"fr\""
+          schema:
+            type: string
+            default: en
       responses:
         "200":
           $ref: "#/components/responses/GeocodeResult"
+          description: OK
         "204":
           description: An empty response if no entry could be found for the specified
             coordinates.
@@ -367,28 +387,31 @@ paths:
           $ref: "#/components/responses/ServiceUnavailable"
   /v1/indexes/{index}:
     get:
-      tags:
-        - Indexes
       summary: "List various, always up-to-date indexes like consumer price index\
         \ for many countries"
       operationId: indexes
+      tags:
+        - Indexes
       parameters:
         - name: index
           in: path
+          required: true
           description: The identification of the index. A complete list of available
             indexes can be found in the documentation
-          required: true
           schema:
             $ref: "#/components/schemas/Index"
+            type: string
         - name: frequency
           in: query
-          description: The frequency in which the index is published
           required: false
+          description: The frequency in which the index is published
           schema:
             $ref: "#/components/schemas/IndexFrequency"
+            default: yearly
       responses:
         "200":
           $ref: "#/components/responses/IndexResult"
+          description: OK
         "204":
           description: An empty response if specified index is not available.
         "402":
@@ -403,24 +426,26 @@ paths:
           $ref: "#/components/responses/ServiceUnavailable"
   /v1/invoice-pdf:
     post:
-      tags:
-        - Invoice PDF
       summary: Create a invoice PDF
       operationId: createInvoicePDFV1
+      deprecated: true
+      tags:
+        - Invoice PDF
       requestBody:
         description: The invoice object to create a PDF from.
+        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/InvoicePayloadV1"
           application/octet-stream:
             schema:
-              format: binary
               type: string
-        required: true
+              format: binary
       responses:
         "200":
           $ref: "#/components/responses/InvoicePdf"
+          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -431,27 +456,27 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
-      deprecated: true
   /v1/swiss-qr-invoice:
     post:
-      tags:
-        - Swiss QR Invoice
       summary: Create a Swiss QR invoice
       operationId: createSwissQrInvoice
+      tags:
+        - Swiss QR Invoice
       requestBody:
         description: The payload to generate QR invoice from
+        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/SwissQrInvoicePayload"
           application/octet-stream:
             schema:
-              format: binary
               type: string
-        required: true
+              format: binary
       responses:
         "200":
           $ref: "#/components/responses/SwissQrInvoice"
+          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -464,24 +489,56 @@ paths:
           $ref: "#/components/responses/ServiceUnavailable"
   /v2/invoice-pdf:
     post:
-      tags:
-        - Invoice PDF
       summary: Create a invoice PDF
       operationId: createInvoicePDFV2
+      tags:
+        - Invoice PDF
       requestBody:
         description: The invoice object to create a PDF from.
+        required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/InvoicePayload"
           application/octet-stream:
             schema:
-              format: binary
               type: string
-        required: true
+              format: binary
       responses:
         "200":
           $ref: "#/components/responses/InvoicePdf"
+          description: OK
+        "402":
+          $ref: "#/components/responses/PaymentRequired"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/barcode:
+    post:
+      summary: Generate a barcode
+      operationId: generateBarcodeJson
+      tags:
+        - Barcode
+      requestBody:
+        description: Barcode payload to generate
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BarcodePayload"
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+      responses:
+        "200":
+          $ref: "#/components/responses/Barcode"
+          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -493,219 +550,233 @@ paths:
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
 components:
+  securitySchemes:
+    ApiKeyHeader:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: "Prefix the value with \"Bearer\". For example: \"Bearer APIKEY\""
   schemas:
     HtmlPayload:
+      type: object
       required:
         - content
-      type: object
       properties:
         content:
+          type: string
           description: The HTML document to be converted
-          type: string
         header:
+          type: string
           description: A HTML document used as PDF header
-          type: string
         footer:
-          description: A HTML document used as PDF footer
           type: string
+          description: A HTML document used as PDF footer
         width:
+          type: number
           format: float
           description: Page width in centimeter
           default: 21
-          type: number
         height:
+          type: number
           format: float
           description: Page height in centimeter
           default: 29.7
-          type: number
         marginTop:
+          type: number
           format: float
           description: Top page margin in centimeter
           default: 1
-          type: number
         marginBottom:
+          type: number
           format: float
           description: Bottom page margin in centimeter
           default: 1
-          type: number
         marginStart:
+          type: number
           format: float
           description: Start (left) page margin in centimeter
           default: 1
-          type: number
         marginEnd:
+          type: number
           format: float
           description: End (right) page margin in centimeter
           default: 1
-          type: number
         landscape:
+          type: boolean
           description: Page orientation
           default: false
-          type: boolean
         printBackground:
+          type: boolean
           description: Print background graphics
           default: false
-          type: boolean
     ErrorMessage:
+      type: object
       required:
         - messages
-      type: object
       properties:
         messages:
-          description: A list of error messages
           type: array
           items:
             type: string
+          description: A list of error messages
     EpcQrCodePayload:
+      type: object
       required:
         - iban
         - recipient
-      type: object
       properties:
         bic:
+          type: string
           description: The bank identifier code of the recipient bank
-          type: string
         iban:
+          type: string
           description: The international bank account number of the recipient
-          type: string
         recipient:
-          description: The recipients name
           type: string
+          description: The recipients name
         currency:
+          type: string
           description: The currency according to ISO 4217
           default: EUR
-          type: string
         amount:
+          type: number
           format: float
           description: The amount with a maximum of two decimal places
-          type: number
         reference:
+          type: string
           description: The payment reference
-          type: string
         text:
-          description: The bank transfer text
           type: string
+          description: The bank transfer text
         size:
+          type: integer
           format: int32
           description: The size of the QR code in pixels
           default: 300
           maximum: 2000
           minimum: 100
-          type: integer
         frame:
+          type: boolean
           description: Draw a frame around the QR code
           default: false
-          type: boolean
         message:
-          description: A user hint
           type: string
+          description: A user hint
+        version:
+          type: integer
+          format: int32
+          description: The version in which the QR code is to be generated
+          default: 2
+          maximum: 2
+          minimum: 1
     VatVerificationResult:
+      type: object
       required:
         - valid
-      type: object
       properties:
         valid:
-          description: The validity of the passed VAT ID
           type: boolean
+          description: The validity of the passed VAT ID
         name:
+          type: string
           description: The company's name related to the passed VAT ID
-          type: string
         address:
+          type: string
           description: The company's address related to the passed VAT ID
-          type: string
         countryCode:
-          description: The company's country based on ISO 3166-1 alpha-2
           type: string
+          description: The company's country based on ISO 3166-1 alpha-2
     VatVerificationPayload:
+      type: object
       required:
         - vatId
-      type: object
       properties:
         vatId:
-          description: The VAT ID to check.
           type: string
+          description: The VAT ID to check.
     GeocodeResult:
+      type: object
       required:
         - address
         - position
-      type: object
       properties:
         position:
-          description: "The coordinates (latitude, longitude) of a point on a map\
-            \ corresponding to the searched place"
+          type: object
           required:
             - latitude
             - longitude
-          type: object
+          description: "The coordinates (latitude, longitude) of a point on a map\
+            \ corresponding to the searched place"
           properties:
             latitude:
+              type: number
               format: double
               description: Latitude of the address. For example "48.20661"
-              type: number
             longitude:
+              type: number
               format: double
               description: Longitude of the address. For example "16.36301"
-              type: number
         address:
-          description: The postal address of the searched place
           type: object
+          description: The postal address of the searched place
           properties:
             houseNumber:
+              type: string
               description: The house number. For example "1a" or "27"
-              type: string
             street:
+              type: string
               description: Name of the street
-              type: string
             city:
-              description: The localised name of the city
               type: string
+              description: The localised name of the city
             postalCode:
+              type: string
               description: An alphanumeric string included in a postal address such
                 as post code or ZIP code. For example "1010"
-              type: string
             country:
-              description: The localised country name
               type: string
+              description: The localised country name
             countryCode:
+              type: string
               description: A two letter country code based on ISO 3166-1 alpha-2.
                 For example "AT"
-              type: string
     GeocodeSearchPayload:
+      type: object
       required:
         - query
-      type: object
       properties:
         query:
+          type: string
           description: "A free-text address query. For example: \"Heldenplatz, Wien\"\
             \ or \"Wiedner Hauptstraße 32, 1040 Wien\""
-          type: string
         language:
+          type: string
           description: "The language used for result localization based on ISO 639-1.\
             \ For example: \"en\" or \"fr\""
           default: en
-          type: string
     GeocodeReversePayload:
+      type: object
       required:
         - latitude
         - longitude
-      type: object
       properties:
         latitude:
+          type: number
           format: double
           description: The latitude coordinate of a point to search for. For example
             "48.20661"
-          type: number
         longitude:
+          type: number
           format: double
           description: The longitude coordinate of a point to search for. For example
             "16.36301"
-          type: number
         language:
+          type: string
           description: "The language used for result localization based on ISO 639-1.\
             \ For example: \"en\" or \"fr\""
           default: en
-          type: string
     Index:
+      type: string
       enum:
         - at-cpi-1
         - at-cpi-2
@@ -757,648 +828,845 @@ components:
         - ea-eu-hicp-2015
         - eea-eu-hicp-2015
         - eu-eu-hicp-2015
-      type: string
     IndexFrequency:
+      type: string
       enum:
         - MONTHLY
         - YEARLY
-      type: string
     IndexValue:
+      type: object
       required:
         - year
         - value
-      type: object
       properties:
         year:
+          type: integer
           description: The year in the index series which the value represents
-          type: integer
         month:
-          description: The month in the index series which the value represents
           type: integer
+          description: The month in the index series which the value represents
         value:
+          type: number
           format: float
           description: The index value
-          type: number
     IndexResult:
+      type: object
       required:
         - id
         - name
         - frequency
-      type: object
       properties:
         id:
+          type: string
           description: The index name
-          type: string
         name:
+          type: string
           description: The official name of the index
-          type: string
         source:
-          description: The data source of the index
           type: string
+          description: The data source of the index
         frequency:
           $ref: "#/components/schemas/IndexFrequency"
+          description: The frequency in which the index is published
         values:
-          description: The index series in ascending order
           type: array
           items:
             $ref: "#/components/schemas/IndexValue"
+          description: The index series in ascending order
     SwissQrInvoiceCreditor:
+      type: object
       required:
         - iban
         - name
         - postalCode
         - city
-      type: object
       properties:
         iban:
+          type: string
           description: The international bank account number of the creditor
-          type: string
         name:
+          type: string
+          maxLength: 70
           description: The creditors name
-          maxLength: 70
-          type: string
         street:
-          description: The creditors street
+          type: string
           maxLength: 70
-          type: string
+          description: The creditors street
         postalCode:
-          description: The creditors postal code
+          type: string
           maxLength: 16
-          type: string
+          description: The creditors postal code
         city:
-          description: The creditors city
-          maxLength: 35
           type: string
+          maxLength: 35
+          description: The creditors city
         country:
+          type: string
           description: The creditors country
           default: CH
-          type: string
     SwissQrInvoiceDebtor:
+      type: object
       required:
         - name
         - postalCode
         - city
-      type: object
       properties:
         name:
+          type: string
+          maxLength: 70
           description: The debtors name
-          maxLength: 70
-          type: string
         street:
-          description: The debtors street
+          type: string
           maxLength: 70
-          type: string
+          description: The debtors street
         postalCode:
-          description: The debtors postal code
+          type: string
           maxLength: 16
-          type: string
+          description: The debtors postal code
         city:
-          description: The debtors city
-          maxLength: 35
           type: string
+          maxLength: 35
+          description: The debtors city
         country:
+          type: string
           description: The debtors country
           default: CH
-          type: string
     InvoicePayloadV1:
+      type: object
       required:
         - sender
         - recipient
         - items
-      type: object
       properties:
         template:
-          description: The invoice template
-          default: DEFAULT
+          type: string
           enum:
             - DEFAULT
             - CLASSIC
             - MODERN
             - MINIMALISTIC
-          type: string
+          description: The invoice template
+          default: DEFAULT
         sender:
+          type: array
+          items:
+            type: string
           description: The data of the invoice issuer
-          type: array
-          items:
-            type: string
         recipient:
-          description: The data of the invoice recipient
           type: array
           items:
             type: string
+          description: The data of the invoice recipient
         logo:
-          description: The logo of the invoice issuer encoded as base64.
           type: string
+          description: The logo of the invoice issuer encoded as base64.
         locale:
+          type: string
           description: The country or language according to which the values are to
             be formatted.
           default: de-AT
-          type: string
         currency:
+          type: string
           description: The currency according to ISO 4217
           default: EUR
-          type: string
         items:
-          description: The list of items that are to be invoiced.
           type: array
           items:
-            description: "A single invoice item. Either unitPrice or sumPrice must\
-              \ be set. If the unitPrice field is set, the sumPrice is calculated."
+            type: object
             required:
               - description
-            type: object
+            description: "A single invoice item. Either unitPrice or sumPrice must\
+              \ be set. If the unitPrice field is set, the sumPrice is calculated."
             properties:
               description:
-                description: The description of the invoice item
                 type: string
+                description: The description of the invoice item
               amount:
+                type: number
                 format: double
                 description: The amount of the invoice item
                 default: 1
-                type: number
               unit:
-                description: "The optional unit, for example, kilogram or piece."
                 type: string
+                description: "The optional unit, for example, kilogram or piece."
               unitPrice:
+                type: number
                 format: double
                 description: The price per unit
-                type: number
               sumPrice:
+                type: number
                 format: double
                 description: "The total price of the invoice item. If the field is\
                   \ not set, it is calculated using the unit price and amount."
-                type: number
+          description: The list of items that are to be invoiced.
         footerItems:
-          description: "The list of footer items. An informative element that is shown\
-            \ in the footer of the invoice, for example, to display information about\
-            \ the company."
           type: array
           items:
+            type: object
             description: "An informative element that is shown in the footer of the\
               \ invoice, for example, to display information about the company."
-            type: object
             properties:
               title:
-                description: The item title
                 type: string
+                description: The item title
               values:
-                description: A list of values
                 type: array
                 items:
                   type: string
+                description: A list of values
+          description: "The list of footer items. An informative element that is shown\
+            \ in the footer of the invoice, for example, to display information about\
+            \ the company."
         contextItems:
-          description: "The list of context items. An informative element that is\
-            \ shown in the content of the invoice, for example to display detailed\
-            \ information such as the invoice number for the respective invoice."
           type: array
           items:
+            type: object
             description: "An informative element that is shown in the content of the\
               \ invoice, for example to display detailed information such as the invoice\
               \ number for the respective invoice."
-            type: object
             properties:
               title:
+                type: string
                 description: The item title
-                type: string
               value:
-                description: The item value
                 type: string
+                description: The item value
+          description: "The list of context items. An informative element that is\
+            \ shown in the content of the invoice, for example to display detailed\
+            \ information such as the invoice number for the respective invoice."
         feeTaxItems:
+          type: array
+          items:
+            type: object
+            required:
+              - title
+            description: "An element to add any tax and/or fees in addition to the\
+              \ invoice items. When using the 'percent' field, the value is calculated\
+              \ from the sum of the invoice items including any previous taxes and\
+              \ fees. The values are calculated in the order passed."
+            properties:
+              title:
+                type: string
+                description: The element title for example "20% VAT" or "Dunning charge".
+              percent:
+                type: number
+                format: float
+                description: The item percent. The resulting value is calculated from
+                  the sum of the invoice items including any previous taxes and fees.
+                  The values are calculated in the order passed.
+              value:
+                type: number
+                format: double
+                description: The item value
           description: "The list of fee and tax items. An element to add any tax and/or\
             \ fees in addition to the invoice items. When using the 'percent' field,\
             \ the value is calculated from the sum of the invoice items including\
             \ any previous taxes and fees. The values are calculated in the order\
             \ passed."
-          type: array
-          items:
-            description: "An element to add any tax and/or fees in addition to the\
-              \ invoice items. When using the 'percent' field, the value is calculated\
-              \ from the sum of the invoice items including any previous taxes and\
-              \ fees. The values are calculated in the order passed."
-            required:
-              - title
-            type: object
-            properties:
-              title:
-                description: The element title for example "20% VAT" or "Dunning charge".
-                type: string
-              percent:
-                format: float
-                description: The item percent. The resulting value is calculated from
-                  the sum of the invoice items including any previous taxes and fees.
-                  The values are calculated in the order passed.
-                type: number
-              value:
-                format: double
-                description: The item value
-                type: number
         notice:
-          description: A note that is printed at the end of the invoice.
           type: string
+          description: A note that is printed at the end of the invoice.
         labels:
-          description: 'This object can be used to overwrite standard invoice texts. '
           type: object
+          description: 'This object can be used to overwrite standard invoice texts. '
           properties:
             invoice:
+              type: string
               default: Invoice
-              type: string
             subtotal:
+              type: string
               default: Subtotal
-              type: string
             total:
+              type: string
               default: Total
-              type: string
             amount:
+              type: string
               default: Amount
-              type: string
             description:
+              type: string
               default: Description
-              type: string
             unitPrice:
+              type: string
               default: Unit price
-              type: string
             sumPrice:
-              default: Sum price
               type: string
+              default: Sum price
             numberOfPages:
+              type: string
               description: "Use the placeholders {current} and {total} for the current\
                 \ page and the total number of pages respectively."
               default: "{current} | {total}"
-              type: string
         epcQrCode:
-          description: "The information for creating an EPC QR code. If this object\
-            \ is provided, a QR code will be printed on the invoice."
+          type: object
           required:
             - iban
             - recipient
-          type: object
+          description: "The information for creating an EPC QR code. If this object\
+            \ is provided, a QR code will be printed on the invoice."
           properties:
             iban:
+              type: string
               description: The international bank account number of the recipient
-              type: string
             bic:
+              type: string
               description: The bank identifier code of the recipient bank
-              type: string
             recipient:
+              type: string
               description: The recipients name
-              type: string
             reference:
+              type: string
               description: The payment reference
-              type: string
             text:
+              type: string
               description: The bank transfer text
-              type: string
             message:
-              description: A user hint
               type: string
+              description: A user hint
         swissQrInvoice:
+          type: object
+          required:
+            - creditor
           description: "The information for creating a Swiss QR invoice. If this object\
             \ is provided, a Swiss QR invoice code will be printed on the invoice.\
             \ For more details see Swiss QR invoice documentation."
-          required:
-            - creditor
-          type: object
           properties:
             creditor:
               $ref: "#/components/schemas/SwissQrInvoiceCreditor"
             debtor:
               $ref: "#/components/schemas/SwissQrInvoiceDebtor"
             information:
+              type: string
               description: Additional unstructured information.
-              type: string
             structuredInformation:
-              description: Additional structured information.
               type: string
+              description: Additional structured information.
             reference:
+              type: string
               description: The payment reference based either on ISO 11649 or on QR
                 reference.
-              type: string
         currencyFormat:
+          type: string
+          enum:
+            - SYMBOL
+            - CODE
+            - NAME
           description: "The currency format to be used. SYMBOL for the currency symbol\
             \ e.g. €, CODE for the currency abbreviation e.g. EUR and NAME for the\
             \ name of the currency which is translated using the 'locale' variable,\
             \ e.g. Euro."
           default: CODE
-          enum:
-            - SYMBOL
-            - CODE
-            - NAME
-          type: string
     SwissQrInvoicePayload:
+      type: object
       required:
         - creditor
-      type: object
       properties:
         creditor:
           $ref: "#/components/schemas/SwissQrInvoiceCreditor"
         debtor:
           $ref: "#/components/schemas/SwissQrInvoiceDebtor"
         currency:
-          description: The currency according to ISO 4217.
-          default: CHF
+          type: string
           enum:
             - CHF
             - EUR
-          type: string
+          description: The currency according to ISO 4217.
+          default: CHF
         amount:
+          type: number
           format: float
           description: The amount with a maximum of two decimal places
-          type: number
         information:
+          type: string
           description: Additional unstructured information.
-          type: string
         structuredInformation:
+          type: string
           description: Additional structured information.
-          type: string
         reference:
-          description: The payment reference based either on ISO 11649 or on QR reference.
           type: string
+          description: The payment reference based either on ISO 11649 or on QR reference.
         size:
-          description: The output size.
-          default: QR_CODE
+          type: string
           enum:
             - QR_CODE
             - QR_BILL
             - A4_SHEET
-          type: string
+          description: The output size.
+          default: QR_CODE
         language:
-          description: The output language.
-          default: EN
+          type: string
           enum:
             - DE
             - FR
             - IT
             - EN
-          type: string
+          description: The output language.
+          default: EN
     InvoiceParty:
+      type: object
       required:
         - name
-      type: object
       properties:
         name:
+          type: string
           description: The company name
-          type: string
         contact:
+          type: string
           description: The name of a contact person in the company
-          type: string
         street:
+          type: string
           description: The street of the company headquarters
-          type: string
         postalCode:
+          type: string
           description: The postal code of the company headquarters
-          type: string
         city:
+          type: string
           description: The city of the company headquarters
-          type: string
         country:
+          type: string
           description: The country of the company headquarters
-          type: string
         vatNumber:
+          type: string
           description: The company's VAT number
-          type: string
         iban:
+          type: string
           description: The international bank account number of the company.
-          type: string
         bic:
-          description: The bank identifier code of the company
           type: string
+          description: The bank identifier code of the company
     InvoiceMetadata:
       type: object
       properties:
         issueDate:
+          type: string
           description: "The date of issue of the invoice. The value is used for the\
-            \ ZUGFerd e-invoice. If the value is missing, the current date is used."
-          type: string
+            \ ZUGFeRD e-invoice. If the value is missing, the current date is used."
         dueDate:
-          description: The due date of the invoice. The value is used for the ZUGFerd
+          type: string
+          description: The due date of the invoice. The value is used for the ZUGFeRD
             e-invoice.
-          type: string
         number:
-          description: The invoice number of the invoice. The value is used for the
-            ZUGFerd e-invoice.
           type: string
+          description: The invoice number of the invoice. The value is used for the
+            ZUGFeRD e-invoice.
     InvoicePayload:
+      type: object
       required:
         - sender
         - recipient
         - items
-      type: object
       properties:
         template:
-          description: The invoice template
-          default: DEFAULT
+          type: string
           enum:
             - DEFAULT
             - CLASSIC
             - MODERN
             - MINIMALISTIC
-          type: string
+          description: The invoice template
+          default: DEFAULT
         sender:
           $ref: "#/components/schemas/InvoiceParty"
         recipient:
           $ref: "#/components/schemas/InvoiceParty"
         logo:
-          description: The logo of the invoice issuer encoded as base64.
           type: string
+          description: The logo of the invoice issuer encoded as base64.
         locale:
+          type: string
           description: The country or language according to which the values are to
             be formatted.
           default: de-AT
-          type: string
         currency:
+          type: string
           description: The currency according to ISO 4217
           default: EUR
-          type: string
         items:
-          description: The list of items that are to be invoiced.
           type: array
           items:
-            description: "A single invoice item. Either unitPrice or sumPrice must\
-              \ be set. If the unitPrice field is set, the sumPrice is calculated."
+            type: object
             required:
               - description
-            type: object
+            description: "A single invoice item. Either unitPrice or sumPrice must\
+              \ be set. If the unitPrice field is set, the sumPrice is calculated."
             properties:
               description:
-                description: The description of the invoice item
                 type: string
+                description: The description of the invoice item
               amount:
+                type: number
                 format: double
                 description: The amount of the invoice item
                 default: 1
-                type: number
               unit:
-                description: "The optional unit, for example, kilogram or piece."
                 type: string
+                description: "The optional unit, for example, kilogram or piece."
               unitPrice:
+                type: number
                 format: double
                 description: The price per unit
-                type: number
               sumPrice:
+                type: number
                 format: double
                 description: "The total price of the invoice item. If the field is\
                   \ not set, it is calculated using the unit price and amount."
-                type: number
               tax:
+                type: number
                 format: double
                 description: The value added tax in percent
                 default: 0
-                type: number
+          description: The list of items that are to be invoiced.
         footerItems:
-          description: "The list of footer items. An informative element that is shown\
-            \ in the footer of the invoice, for example, to display information about\
-            \ the company."
           type: array
           items:
+            type: object
             description: "An informative element that is shown in the footer of the\
               \ invoice, for example, to display information about the company."
-            type: object
             properties:
               title:
-                description: The item title
                 type: string
+                description: The item title
               values:
-                description: A list of values
                 type: array
                 items:
                   type: string
+                description: A list of values
+          description: "The list of footer items. An informative element that is shown\
+            \ in the footer of the invoice, for example, to display information about\
+            \ the company."
         contextItems:
-          description: "The list of context items. An informative element that is\
-            \ shown in the content of the invoice, for example to display detailed\
-            \ information such as the invoice number for the respective invoice."
           type: array
           items:
+            type: object
             description: "An informative element that is shown in the content of the\
               \ invoice, for example to display detailed information such as the invoice\
               \ number for the respective invoice."
-            type: object
             properties:
               title:
+                type: string
                 description: The item title
-                type: string
               value:
-                description: The item value
                 type: string
+                description: The item value
+          description: "The list of context items. An informative element that is\
+            \ shown in the content of the invoice, for example to display detailed\
+            \ information such as the invoice number for the respective invoice."
         feeTaxItems:
+          type: array
+          items:
+            type: object
+            required:
+              - title
+            description: "An element to add any tax and/or fees in addition to the\
+              \ invoice items. When using the 'percent' field, the value is calculated\
+              \ from the sum of the invoice items including any previous taxes and\
+              \ fees. The values are calculated in the order passed."
+            properties:
+              title:
+                type: string
+                description: The element title for example "Dunning charge".
+              percent:
+                type: number
+                format: float
+                description: The item percent. The resulting value is calculated from
+                  the sum of the invoice items including any previous taxes and fees.
+                  The values are calculated in the order passed.
+              value:
+                type: number
+                format: double
+                description: The item value
           description: "The list of fee and tax items. An element to add any tax and/or\
             \ fees in addition to the invoice items. When using the 'percent' field,\
             \ the value is calculated from the sum of the invoice items including\
             \ any previous taxes and fees. The values are calculated in the order\
             \ passed."
-          type: array
-          items:
-            description: "An element to add any tax and/or fees in addition to the\
-              \ invoice items. When using the 'percent' field, the value is calculated\
-              \ from the sum of the invoice items including any previous taxes and\
-              \ fees. The values are calculated in the order passed."
-            required:
-              - title
-            type: object
-            properties:
-              title:
-                description: The element title for example "Dunning charge".
-                type: string
-              percent:
-                format: float
-                description: The item percent. The resulting value is calculated from
-                  the sum of the invoice items including any previous taxes and fees.
-                  The values are calculated in the order passed.
-                type: number
-              value:
-                format: double
-                description: The item value
-                type: number
         notice:
-          description: A note that is printed at the end of the invoice.
           type: string
+          description: A note that is printed at the end of the invoice.
         labels:
-          description: 'This object can be used to overwrite standard invoice texts. '
           type: object
+          description: 'This object can be used to overwrite standard invoice texts. '
           properties:
             invoice:
+              type: string
               default: Invoice
-              type: string
             subtotal:
+              type: string
               default: Subtotal
-              type: string
             total:
+              type: string
               default: Total
-              type: string
             amount:
+              type: string
               default: Amount
-              type: string
             description:
+              type: string
               default: Description
-              type: string
             unitPrice:
+              type: string
               default: Unit price
-              type: string
             sumPrice:
-              default: Sum price
               type: string
+              default: Sum price
             numberOfPages:
+              type: string
               description: "Use the placeholders {current} and {total} for the current\
                 \ page and the total number of pages respectively."
               default: "{current} | {total}"
-              type: string
             vat:
-              default: VAT
               type: string
+              default: VAT
         epcQrCode:
+          type: object
           description: "The information for creating an EPC QR code. If this object\
             \ is provided, a QR code will be printed on the invoice."
-          type: object
           properties:
             reference:
+              type: string
               description: The payment reference
-              type: string
             text:
+              type: string
               description: The bank transfer text
-              type: string
             message:
-              description: A user hint
               type: string
+              description: A user hint
         swissQrInvoice:
+          type: object
           description: "The information for creating a Swiss QR invoice. If this object\
             \ is provided, a Swiss QR invoice code will be printed on the invoice.\
             \ For more details see Swiss QR invoice documentation."
-          type: object
           properties:
             information:
+              type: string
               description: Additional unstructured information.
-              type: string
             structuredInformation:
-              description: Additional structured information.
               type: string
+              description: Additional structured information.
             reference:
+              type: string
               description: The payment reference based either on ISO 11649 or on QR
                 reference.
-              type: string
         currencyFormat:
+          type: string
+          enum:
+            - SYMBOL
+            - CODE
+            - NAME
           description: "The currency format to be used. SYMBOL for the currency symbol\
             \ e.g. €, CODE for the currency abbreviation e.g. EUR and NAME for the\
             \ name of the currency which is translated using the 'locale' variable,\
             \ e.g. Euro."
           default: CODE
-          enum:
-            - SYMBOL
-            - CODE
-            - NAME
-          type: string
         metadata:
           $ref: "#/components/schemas/InvoiceMetadata"
         zugferdDisabled:
+          type: boolean
           description: A flag to deactivate the creation of the ZUGFerd invoice.
           default: false
+    BarcodeAztecOptions:
+      type: object
+      description: Additional options for AZTEC barcode format
+      properties:
+        characterSet:
+          type: string
+          description: "The character set in which the data is to be encoded in the\
+            \ barcode. For example UTF-8, ISO 8859-1 or US-ASCII"
+        errorCorrection:
+          type: integer
+          format: int32
+          description: Specifies what degree of error correction to use in percent.
+            Aztec codes should have a minimum of 23%.
+          default: 33
+          maximum: 100
+          minimum: 0
+        layers:
+          type: integer
+          format: int32
+          description: "Specifies the required number of layers for an Aztec code.\
+            \ A negative number (-1, -2, -3, -4) specifies a compact Aztec code. 0\
+            \ indicates to use the minimum number of layers. A positive number (1,\
+            \ 2, .. 32) specifies a normal Aztec code."
+          default: 0
+          maximum: 32
+          minimum: -4
+    BarcodeCode128Options:
+      type: object
+      description: Additional options for CODE_128 barcode format
+      properties:
+        compact:
           type: boolean
+          description: Specifies whether to use compact mode. This can yield slightly
+            smaller bar codes
+          default: false
+    BarcodeDataMatrixOptions:
+      type: object
+      description: Additional options for DATA_MATRIX barcode format
+      properties:
+        compact:
+          type: boolean
+          description: Specifies whether to use compact mode. This can yield slightly
+            smaller bar codes
+          default: false
+        forceC40:
+          type: boolean
+          description: Force C40 encoding. C40 and compact are mutually exclusive
+          default: false
+        gs1Format:
+          type: boolean
+          description: Specifies whether the data should be encoded to the GS1 standard
+          default: false
+        characterSet:
+          type: string
+          description: "The character set in which the data is to be encoded in the\
+            \ barcode. For example UTF-8, ISO 8859-1 or US-ASCII"
+        shape:
+          type: string
+          enum:
+            - NONE
+            - SQUARE
+            - RECTANGLE
+          description: Specifies the matrix shape
+          default: NONE
+    BarcodePdf417Options:
+      type: object
+      description: Additional options for PDF_417 barcode format
+      properties:
+        compact:
+          type: boolean
+          description: Specifies whether to use compact mode. This can yield slightly
+            smaller bar codes
+          default: false
+        autoEci:
+          type: boolean
+          description: Specifies whether to automatically insert ECIs
+          default: false
+        characterSet:
+          type: string
+          description: "The character set in which the data is to be encoded in the\
+            \ barcode. For example UTF-8, ISO 8859-1 or US-ASCII"
+        compaction:
+          type: string
+          enum:
+            - AUTO
+            - TEXT
+            - BYTE
+            - NUMERIC
+          description: Specifies the matrix shape
+          default: AUTO
+        errorCorrection:
+          type: integer
+          format: int32
+          description: Specifies what degree of error correction to use
+          default: 2
+          maximum: 8
+          minimum: 0
+    BarcodeQrCodeOptions:
+      type: object
+      description: Additional options for QR_CODE barcode format
+      properties:
+        compact:
+          type: boolean
+          description: Specifies whether to use compact mode. This can yield slightly
+            smaller codes
+          default: false
+        gs1Format:
+          type: boolean
+          description: Specifies whether the data should be encoded to the GS1 standard
+          default: false
+        version:
+          type: integer
+          format: int32
+          description: Specifies the exact version of QR code to be encoded
+          maximum: 40
+          minimum: 1
+        characterSet:
+          type: string
+          description: "The character set in which the data is to be encoded in the\
+            \ barcode. For example UTF-8, ISO 8859-1 or US-ASCII"
+        errorCorrection:
+          type: string
+          enum:
+            - L
+            - M
+            - Q
+            - H
+          description: Specifies the error correction to use
+          default: L
+    BarcodePayload:
+      type: object
+      required:
+        - format
+        - content
+      properties:
+        format:
+          type: string
+          enum:
+            - AZTEC
+            - CODABAR
+            - CODE_39
+            - CODE_93
+            - CODE_128
+            - DATA_MATRIX
+            - EAN_8
+            - EAN_13
+            - INTERLEAVED_TWO_OF_FIVE
+            - PDF_417
+            - QR_CODE
+            - UPC_A
+            - UPC_E
+          description: The barcode type
+        content:
+          type: string
+          description: The content to be encoded in the barcode
+        width:
+          type: integer
+          format: int32
+          description: The minimum width of the barcode in pixels
+          default: 1
+          maximum: 2000
+          minimum: 1
+        height:
+          type: integer
+          format: int32
+          description: The minimum height of the barcode in pixels
+          default: 1
+          maximum: 2000
+          minimum: 1
+        foregroundColor:
+          type: string
+          description: "The foreground color of the barcode as a hex code, for example\
+            \ #FF00DD"
+          default: "#000000"
+        backgroundColor:
+          type: string
+          description: "The background color of the barcode as a hex code, for example\
+            \ #EEEEEE"
+          default: "#FFFFFF"
+        output:
+          type: string
+          enum:
+            - PNG
+            - JPEG
+            - GIF
+            - TIFF
+            - WEBP
+          description: The image format in which the barcode is to be generated
+          default: WEBP
+        options:
+          oneOf:
+            - $ref: "#/components/schemas/BarcodeAztecOptions"
+            - $ref: "#/components/schemas/BarcodeCode128Options"
+            - $ref: "#/components/schemas/BarcodeDataMatrixOptions"
+            - $ref: "#/components/schemas/BarcodePdf417Options"
+            - $ref: "#/components/schemas/BarcodeQrCodeOptions"
+          description: Some barcode formats allow you to set additional options
   responses:
     HtmlToPdf:
       description: The generated PDF file
       content:
         application/pdf:
           schema:
-            format: byte
             type: string
+            format: byte
     PaymentRequired:
       description: Your remaining quota is not sufficient to perform the request.
       content:
@@ -1437,8 +1705,8 @@ components:
       content:
         image/png:
           schema:
-            format: byte
             type: string
+            format: byte
     VatVerificationResult:
       description: The validity of the VAT ID and additional information about the
         company
@@ -1463,30 +1731,47 @@ components:
       content:
         application/pdf:
           schema:
-            format: byte
             type: string
+            format: byte
     SwissQrInvoice:
       description: The generated Swiss QR invoice in the requested file format.
       content:
         image/svg+xml:
           schema:
-            format: binary
             type: string
+            format: binary
         application/svg+xml:
           schema:
-            format: binary
             type: string
+            format: binary
         image/png:
           schema:
-            format: binary
             type: string
+            format: binary
         application/pdf:
           schema:
-            format: binary
             type: string
-  securitySchemes:
-    ApiKeyHeader:
-      type: apiKey
-      description: "Prefix the value with \"Bearer\". For example: \"Bearer APIKEY\""
-      name: Authorization
-      in: header
+            format: binary
+    Barcode:
+      description: The generated barcode
+      content:
+        image/png:
+          schema:
+            type: string
+            format: byte
+        image/jpeg:
+          schema:
+            type: string
+            format: byte
+        image/tiff:
+          schema:
+            type: string
+            format: byte
+        image/gif:
+          schema:
+            type: string
+            format: byte
+        image/webp:
+          schema:
+            type: string
+            format: byte
