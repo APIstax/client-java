@@ -1,15 +1,15 @@
-import java.net.URI
+import net.thebugmc.gradle.sonatypepublisher.PublishingType
 import java.util.Properties
 
 plugins {
     id("java-library")
-    id("maven-publish")
-    id("signing")
     id("org.openapi.generator") version "7.5.0"
     id("org.kordamp.gradle.jandex") version "2.0.0"
     id("com.github.gmazzo.buildconfig") version "5.6.2"
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.4"
 }
 
+group = "io.apistax"
 version = "1.6.0"
 
 dependencies {
@@ -104,91 +104,71 @@ openApiGenerate {
 }
 
 val properties = Properties().apply {
-    if (System.getenv().containsKey("OSSRH_USERNAME")) {
-        put("ossrhUsername", System.getenv("OSSRH_USERNAME"))
-        put("ossrhPassword", System.getenv("OSSRH_PASSWORD"))
+    if (System.getenv().containsKey("PORTAL_USERNAME")) {
+        put("portalUsername", System.getenv("PORTAL_USERNAME"))
+        put("portalPassword", System.getenv("PORTAL_PASSWORD"))
     } else {
         load(project.rootProject.file("local.properties").inputStream())
     }
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("apistax") {
-            groupId = "io.apistax"
-            artifactId = "apistax-client"
-            from(components["java"])
+centralPortal {
+    username = properties.getProperty("portalUsername")
+    password = properties.getProperty("portalPassword")
 
-            pom {
-                name = "apistax-client"
-                description = "Secure and reliable APIs for your common business needs."
-                url = "https://apistax.io/"
-                inceptionYear = "2022"
+    publishingType = PublishingType.AUTOMATIC
 
-                licenses {
-                    license {
-                        name = "Apache License 2.0"
-                        url = "https://raw.githubusercontent.com/APIstax/client-java/main/LICENSE"
-                    }
-                }
+    name = "apistax-client"
 
-                organization {
-                    name = "instant:solutions OG"
-                    url = "https://instant-it.at/"
-                }
+    pom {
+        name = "apistax-client"
+        description = "Secure and reliable APIs for your common business needs."
+        url = "https://apistax.io/"
+        inceptionYear = "2022"
 
-                developers {
-                    developer {
-                        id = "holzleitner"
-                        name = "Max Holzleitner"
-                        email = "max.holzleitner@instant-it.at"
-                        organization = "instant:solutions OG"
-                        organizationUrl = "https://instant-it.at/"
-                        timezone = "Europe/Vienna"
-                    }
-
-                    developer {
-                        id = "andlinger"
-                        name = "David Andlinger"
-                        email = "david.andlinger@instant-it.at"
-                        organization = "instant:solutions OG"
-                        organizationUrl = "https://instant-it.at/"
-                        timezone = "Europe/Vienna"
-                    }
-                }
-
-                scm {
-                    connection = "scm:git:github.com/apistax/client-java.git"
-                    developerConnection = "scm:git:github.com/apistax/client-java.git"
-                    url = "https://github.com/apistax/client-java"
-                }
+        licenses {
+            license {
+                name = "Apache License 2.0"
+                url = "https://raw.githubusercontent.com/APIstax/client-java/main/LICENSE"
             }
+        }
+
+        organization {
+            name = "instant:solutions OG"
+            url = "https://instant-it.at/"
+        }
+
+        developers {
+            developer {
+                id = "holzleitner"
+                name = "Max Holzleitner"
+                email = "max.holzleitner@instant-it.at"
+                organization = "instant:solutions OG"
+                organizationUrl = "https://instant-it.at/"
+                timezone = "Europe/Vienna"
+            }
+
+            developer {
+                id = "andlinger"
+                name = "David Andlinger"
+                email = "david.andlinger@instant-it.at"
+                organization = "instant:solutions OG"
+                organizationUrl = "https://instant-it.at/"
+                timezone = "Europe/Vienna"
+            }
+        }
+
+        scm {
+            connection = "scm:git:github.com/apistax/client-java.git"
+            developerConnection = "scm:git:github.com/apistax/client-java.git"
+            url = "https://github.com/apistax/client-java"
+        }
+
+        issueManagement {
+            system = "GitHub"
+            url = "https://github.com/apistax/client-java/issues"
         }
     }
-
-    repositories {
-        maven {
-            name = "ossrh"
-            url = URI("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = properties.getProperty("ossrhUsername")
-                password = properties.getProperty("ossrhPassword")
-            }
-        }
-
-        maven {
-            name = "ossrhSnapshot"
-            url = URI("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-            credentials {
-                username = properties.getProperty("ossrhUsername")
-                password = properties.getProperty("ossrhPassword")
-            }
-        }
-    }
-}
-
-signing {
-    sign(publishing.publications["apistax"])
 }
 
 tasks["compileJava"].setDependsOn(listOf(tasks["openApiGenerate"]))
