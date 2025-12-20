@@ -26,6 +26,7 @@ dependencies {
     testImplementation("org.wiremock:wiremock:3.13.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.14.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.14.1")
 }
 
 buildConfig {
@@ -61,7 +62,7 @@ tasks.compileJava {
 sourceSets {
     main {
         java {
-            srcDir("${layout.buildDirectory}/generated/sources/openapi/src/main/java")
+            srcDir("${layout.buildDirectory.get()}/generated/sources/openapi/src/main/java")
         }
     }
 }
@@ -83,7 +84,7 @@ tasks.named<Jar>("jar") {
 openApiGenerate {
     generatorName = "java"
     inputSpec = "$projectDir/api.yml"
-    outputDir = "${layout.buildDirectory}/generated/sources/openapi"
+    outputDir = "${layout.buildDirectory.get()}/generated/sources/openapi"
     packageName = "io.apistax"
     modelPackage = "io.apistax.models"
     apiPackage = "io.apistax.apis"
