@@ -3,9 +3,9 @@ import java.util.Properties
 
 plugins {
     id("java-library")
-    id("org.openapi.generator") version "7.5.0"
-    id("org.kordamp.gradle.jandex") version "2.0.0"
-    id("com.github.gmazzo.buildconfig") version "5.6.2"
+    id("org.openapi.generator") version "7.17.0"
+    id("org.kordamp.gradle.jandex") version "2.3.0"
+    id("com.github.gmazzo.buildconfig") version "6.0.6"
     id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.4"
 }
 
@@ -15,16 +15,17 @@ version = "1.6.0"
 dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
     implementation("com.google.code.findbugs:jsr305:3.0.2")
-    implementation("com.fasterxml.jackson.core:jackson-core:2.17.2")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.17.2")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.17.2")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.17.2")
-    implementation("org.openapitools:jackson-databind-nullable:0.2.6")
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.20.1"))
+    implementation("com.fasterxml.jackson.core:jackson-core")
+    implementation("com.fasterxml.jackson.core:jackson-annotations")
+    implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    implementation("org.openapitools:jackson-databind-nullable:0.2.8")
     implementation("io.mikael:urlbuilder:2.0.9")
 
-    testImplementation("org.wiremock:wiremock:3.9.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.11.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.11.0")
+    testImplementation("org.wiremock:wiremock:3.13.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.1")
 }
 
 buildConfig {
