@@ -101,7 +101,8 @@ public class TestAPIstaxClientImpl {
                 "\"text\":\"text\"," +
                 "\"size\":500," +
                 "\"frame\":true," +
-                "\"message\":\"message\"" +
+                "\"message\":\"message\"," +
+                "\"version\":2" +
                 "}";
 
         var mappingBuilder = WireMock.post("/v1/epc-qr-code")
