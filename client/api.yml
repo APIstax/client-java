@@ -1,7 +1,7 @@
 ---
 openapi: 3.1.0
 info:
-  version: 1.6.0
+  version: 1.7.1
   title: APIstax
   summary: Secure and reliable APIs
   termsOfService: https://apistax.io/terms-of-use
@@ -29,14 +29,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/HtmlPayload"
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
       responses:
         "200":
           $ref: "#/components/responses/HtmlToPdf"
-          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -60,14 +55,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/EpcQrCodePayload"
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
       responses:
         "200":
           $ref: "#/components/responses/EpcQrCode"
-          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -164,7 +154,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/EpcQrCode"
-          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -188,14 +177,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/VatVerificationPayload"
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
       responses:
         "200":
           $ref: "#/components/responses/VatVerificationResult"
-          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -221,7 +205,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/VatVerificationResult"
-          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -245,14 +228,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/GeocodeSearchPayload"
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
       responses:
         "200":
           $ref: "#/components/responses/GeocodeResult"
-          description: OK
         "204":
           description: An empty response if no entry could be found for the specified
             query.
@@ -290,7 +268,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/GeocodeResult"
-          description: OK
         "204":
           description: An empty response if no entry could be found for the specified
             query.
@@ -317,14 +294,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/GeocodeReversePayload"
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
       responses:
         "200":
           $ref: "#/components/responses/GeocodeResult"
-          description: OK
         "204":
           description: An empty response if no entry could be found for the specified
             coordinates.
@@ -371,7 +343,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/GeocodeResult"
-          description: OK
         "204":
           description: An empty response if no entry could be found for the specified
             coordinates.
@@ -400,7 +371,6 @@ paths:
             indexes can be found in the documentation
           schema:
             $ref: "#/components/schemas/Index"
-            type: string
         - name: frequency
           in: query
           required: false
@@ -411,7 +381,6 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/IndexResult"
-          description: OK
         "204":
           description: An empty response if specified index is not available.
         "402":
@@ -438,14 +407,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/InvoicePayloadV1"
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
       responses:
         "200":
           $ref: "#/components/responses/InvoicePdf"
-          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -469,14 +433,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/SwissQrInvoicePayload"
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
       responses:
         "200":
           $ref: "#/components/responses/SwissQrInvoice"
-          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -500,14 +459,9 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/InvoicePayload"
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
       responses:
         "200":
           $ref: "#/components/responses/InvoicePdf"
-          description: OK
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -531,14 +485,35 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/BarcodePayload"
-          application/octet-stream:
-            schema:
-              type: string
-              format: binary
       responses:
         "200":
           $ref: "#/components/responses/Barcode"
-          description: OK
+        "402":
+          $ref: "#/components/responses/PaymentRequired"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/pdf-to-pdf-a:
+    post:
+      summary: Convert PDF to PDF/A
+      operationId: convertPdfToPdfA
+      tags:
+        - PDF to PDF/A
+      requestBody:
+        description: PDF payload to be converted to PDF/A
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/PdfToPdfAPayload"
+      responses:
+        "200":
+          $ref: "#/components/responses/PdfToPdfA"
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -1659,6 +1634,15 @@ components:
             - $ref: "#/components/schemas/BarcodePdf417Options"
             - $ref: "#/components/schemas/BarcodeQrCodeOptions"
           description: Some barcode formats allow you to set additional options
+    PdfToPdfAPayload:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          format: binary
+          description: The PDF file to be converted to PDF/A
   responses:
     HtmlToPdf:
       description: The generated PDF file
@@ -1772,6 +1756,13 @@ components:
             type: string
             format: byte
         image/webp:
+          schema:
+            type: string
+            format: byte
+    PdfToPdfA:
+      description: The converted PDF/A file
+      content:
+        application/pdf:
           schema:
             type: string
             format: byte
