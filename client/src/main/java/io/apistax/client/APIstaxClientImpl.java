@@ -174,7 +174,7 @@ public class APIstaxClientImpl implements APIstaxClient {
                     var errorMessage = objectMapper.readValue(response.body(), ErrorMessage.class);
                     throw new APIstaxException(errorMessage.getMessages());
                 } catch (IOException e) {
-                    throw new APIstaxException(List.of("message.unknownError"));
+                    throw new APIstaxException(List.of("message.unknownError"), e);
                 }
             }
 

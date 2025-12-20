@@ -11,9 +11,13 @@ public class APIstaxException extends RuntimeException {
         super(cause);
     }
 
-    public APIstaxException(List<String> messages) {
-        super(String.join(",", Objects.requireNonNullElseGet(messages, List::of)));
+    public APIstaxException(List<String> messages, Throwable cause) {
+        super(String.join(",", Objects.requireNonNullElseGet(messages, List::of)), cause);
         this.messages = messages;
+    }
+
+    public APIstaxException(List<String> messages) {
+        this(messages, null);
     }
 
     public List<String> getMessages() {
