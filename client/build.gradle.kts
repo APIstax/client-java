@@ -24,8 +24,8 @@ dependencies {
     implementation("io.mikael:urlbuilder:2.0.9")
 
     testImplementation("org.wiremock:wiremock:3.13.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.14.1")
 }
 
 buildConfig {
