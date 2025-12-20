@@ -61,7 +61,7 @@ tasks.compileJava {
 sourceSets {
     main {
         java {
-            srcDir("$buildDir/generated/sources/openapi/src/main/java")
+            srcDir("${layout.buildDirectory}/generated/sources/openapi/src/main/java")
         }
     }
 }
@@ -83,7 +83,7 @@ tasks.named<Jar>("jar") {
 openApiGenerate {
     generatorName = "java"
     inputSpec = "$projectDir/api.yml"
-    outputDir = "$buildDir/generated/sources/openapi"
+    outputDir = "${layout.buildDirectory}/generated/sources/openapi"
     packageName = "io.apistax"
     modelPackage = "io.apistax.models"
     apiPackage = "io.apistax.apis"
