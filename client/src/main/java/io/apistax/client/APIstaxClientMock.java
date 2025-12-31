@@ -2,6 +2,7 @@ package io.apistax.client;
 
 import io.apistax.models.*;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class APIstaxClientMock implements APIstaxClient {
@@ -160,6 +161,11 @@ public class APIstaxClientMock implements APIstaxClient {
     @Override
     public byte[] generateBarcode(BarcodePayload payload) throws APIstaxException {
         return "BARCODE".getBytes(StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public byte[] convertPdfToPdfA(InputStream file) throws APIstaxException {
+        return "PDF/A".getBytes(StandardCharsets.UTF_8);
     }
 
     @Override

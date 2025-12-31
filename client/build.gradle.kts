@@ -22,6 +22,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("org.openapitools:jackson-databind-nullable:0.2.8")
     implementation("io.mikael:urlbuilder:2.0.9")
+    implementation("com.github.mizosoft.methanol:methanol:1.9.0")
 
     testImplementation("org.wiremock:wiremock:3.13.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.14.1")

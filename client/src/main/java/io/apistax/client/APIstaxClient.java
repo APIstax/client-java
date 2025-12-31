@@ -2,6 +2,8 @@ package io.apistax.client;
 
 import io.apistax.models.*;
 
+import java.io.InputStream;
+
 public interface APIstaxClient {
 
     /**
@@ -143,6 +145,16 @@ public interface APIstaxClient {
      * @throws APIstaxException if fails to make API call
      */
     byte[] generateBarcode(BarcodePayload payload) throws APIstaxException;
+
+
+    /**
+     * Convert PDF to PDF/A
+     *
+     * @param file The PDF file to be converted to PDF/A (required)
+     * @return byte[]
+     * @throws APIstaxException if fails to make API call
+     */
+    byte[] convertPdfToPdfA(InputStream file) throws APIstaxException;
 
     /**
      * Create a invoice PDF

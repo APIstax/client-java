@@ -5,11 +5,14 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.github.mizosoft.methanol.MediaType;
+import com.github.mizosoft.methanol.Methanol;
+import com.github.mizosoft.methanol.MultipartBodyPublisher;
 import io.apistax.models.*;
 import io.mikael.urlbuilder.UrlBuilder;
-import jdk.jfr.ContentType;
 import org.openapitools.jackson.nullable.JsonNullableModule;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.http.HttpClient;
@@ -31,10 +34,10 @@ public class APIstaxClientImpl implements APIstaxClient {
         this.apiKey = apiKey;
         this.host = host;
 
-        httpClient = HttpClient.newHttpClient();
+        httpClient = Methanol.create();
 
         objectMapper = new ObjectMapper();
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        objectMapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false);
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -47,7 +50,7 @@ public class APIstaxClientImpl implements APIstaxClient {
 
     @Override
     public byte[] convertHtmlToPdf(HtmlPayload payload) throws APIstaxException {
-        return requestBinary("/v1/html-to-pdf", payload, "application/pdf");
+        return requestBinary("/v1/html-to-pdf", new JsonBodyProvider(payload, objectMapper), "application/pdf");
     }
 
     @Override
@@ -57,7 +60,7 @@ public class APIstaxClientImpl implements APIstaxClient {
 
     @Override
     public byte[] generateEpcQrCode(EpcQrCodePayload payload) throws APIstaxException {
-        return requestBinary("/v1/epc-qr-code", payload, "image/png");
+        return requestBinary("/v1/epc-qr-code", new JsonBodyProvider(payload, objectMapper), "image/png");
     }
 
     @Override
@@ -67,7 +70,7 @@ public class APIstaxClientImpl implements APIstaxClient {
 
     @Override
     public VatVerificationResult verifyVatId(VatVerificationPayload payload) throws APIstaxException {
-        return requestJson("/v1/vat-verification", payload, VatVerificationResult.class);
+        return requestJson("/v1/vat-verification", new JsonBodyProvider(payload, objectMapper), VatVerificationResult.class);
     }
 
     @Override
@@ -77,7 +80,7 @@ public class APIstaxClientImpl implements APIstaxClient {
 
     @Override
     public GeocodeResult geocodeSearch(GeocodeSearchPayload payload) throws APIstaxException {
-        return requestJson("/v1/geocode/search", payload, GeocodeResult.class);
+        return requestJson("/v1/geocode/search", new JsonBodyProvider(payload, objectMapper), GeocodeResult.class);
     }
 
     @Override
@@ -87,7 +90,7 @@ public class APIstaxClientImpl implements APIstaxClient {
 
     @Override
     public GeocodeResult geocodeReverse(GeocodeReversePayload payload) throws APIstaxException {
-        return requestJson("/v1/geocode/reverse", payload, GeocodeResult.class);
+        return requestJson("/v1/geocode/reverse", new JsonBodyProvider(payload, objectMapper), GeocodeResult.class);
     }
 
     @Override
@@ -110,42 +113,56 @@ public class APIstaxClientImpl implements APIstaxClient {
     public byte[] generateSwissQrInvoice(SwissQrInvoicePayload payload, SwissQrInvoiceFormat format) throws APIstaxException {
         String accept = "application/pdf";
 
-        if(format == SwissQrInvoiceFormat.SVG) {
+        if (format == SwissQrInvoiceFormat.SVG) {
             accept = "image/svg+xml";
-        } else if(format == SwissQrInvoiceFormat.PNG) {
+        } else if (format == SwissQrInvoiceFormat.PNG) {
             accept = "image/png";
         }
 
-        return requestBinary("/v1/swiss-qr-invoice", payload, accept);
+        return requestBinary("/v1/swiss-qr-invoice", new JsonBodyProvider(payload, objectMapper), accept);
     }
 
     @Override
     public byte[] generateInvoicePdf(InvoicePayload payload) throws APIstaxException {
-        return requestBinary("/v2/invoice-pdf", payload, "application/pdf");
+        return requestBinary("/v2/invoice-pdf", new JsonBodyProvider(payload, objectMapper), "application/pdf");
     }
 
     @Override
     public byte[] generateBarcode(BarcodePayload payload) throws APIstaxException {
-        return requestBinary("/v1/barcode", payload, "image/*");
+        return requestBinary("/v1/barcode", new JsonBodyProvider(payload, objectMapper), "image/*");
+    }
+
+    @Override
+    public byte[] convertPdfToPdfA(InputStream file) throws APIstaxException {
+        return requestBinary("/v1/pdf-to-pdf-a", new FileBodyProvider(file), "application/pdf");
     }
 
     @Override
     @Deprecated
     public byte[] generateInvoicePdfV1(InvoicePayloadV1 payload) throws APIstaxException {
-        return requestBinary("/v1/invoice-pdf", payload, "application/pdf");
+        return requestBinary("/v1/invoice-pdf", new JsonBodyProvider(payload, objectMapper), "application/pdf");
     }
 
-    private byte[] requestBinary(String path, Object body, String accept) {
+    private byte[] requestBinary(String path, BodyProvider body, String accept) {
         return request(path, body, accept, null, inputStream -> {
             try {
-                return inputStream.readAllBytes();
+                var outputStream = new ByteArrayOutputStream();
+
+                var buffer = new byte[1024 * 4];
+                int n;
+
+                while (-1 != (n = inputStream.read(buffer))) {
+                    outputStream.write(buffer, 0, n);
+                }
+
+                return outputStream.toByteArray();
             } catch (IOException e) {
                 throw new APIstaxException(e);
             }
         });
     }
 
-    private <T> T requestJson(String path, Object body, Class<T> type) {
+    private <T> T requestJson(String path, BodyProvider body, Class<T> type) {
         return requestJson(path, body, null, type);
     }
 
@@ -153,7 +170,7 @@ public class APIstaxClientImpl implements APIstaxClient {
         return requestJson(path, null, query, type);
     }
 
-    private <T> T requestJson(String path, Object body, Map<String, String> query, Class<T> type) {
+    private <T> T requestJson(String path, BodyProvider body, Map<String, String> query, Class<T> type) {
         return request(path, body, "application/json", query, inputStream -> {
             try {
                 return objectMapper.readValue(inputStream, type);
@@ -163,7 +180,7 @@ public class APIstaxClientImpl implements APIstaxClient {
         });
     }
 
-    private <T> T request(String path, Object body, String accept, Map<String, String> query, Function<InputStream, T> mapper) {
+    private <T> T request(String path, BodyProvider body, String accept, Map<String, String> query, Function<InputStream, T> mapper) {
         try {
             var request = createRequestBuilder(path, body, accept, query).build();
 
@@ -178,7 +195,9 @@ public class APIstaxClientImpl implements APIstaxClient {
                 }
             }
 
-            return mapper.apply(response.body());
+            try(var inputStream = response.body()) {
+                return mapper.apply(inputStream);
+            }
         } catch (IOException e) {
             throw new APIstaxException(e);
         } catch (InterruptedException e) {
@@ -187,36 +206,83 @@ public class APIstaxClientImpl implements APIstaxClient {
         }
     }
 
-    private HttpRequest.Builder createRequestBuilder(String path, Object body, String accept, Map<String, String> query) {
-        try {
-            var builder = UrlBuilder.fromString(host + path);
+    private HttpRequest.Builder createRequestBuilder(String path, BodyProvider body, String accept, Map<String, String> query) throws IOException {
+        var builder = UrlBuilder.fromString(host + path);
 
-            if (query != null && !query.isEmpty()) {
-                for (Map.Entry<String, String> entry : query.entrySet()) {
-                    builder = builder.addParameter(entry.getKey(), entry.getValue());
-                }
+        if (query != null && !query.isEmpty()) {
+            for (Map.Entry<String, String> entry : query.entrySet()) {
+                builder = builder.addParameter(entry.getKey(), entry.getValue());
             }
+        }
 
-            var requestBuilder = HttpRequest.newBuilder();
-            requestBuilder.uri(builder.toUri());
-            requestBuilder.header("Content-Type", "application/json");
-            requestBuilder.header("Authorization", "Bearer " + apiKey);
-            requestBuilder.header("User-Agent", "apistax-java-client " + BuildConfig.VERSION);
+        var requestBuilder = HttpRequest.newBuilder();
+        requestBuilder.uri(builder.toUri());
+        requestBuilder.header("Authorization", "Bearer " + apiKey);
+        requestBuilder.header("User-Agent", "apistax-java-client " + BuildConfig.VERSION);
 
-            if(accept != null) {
-                requestBuilder.header("Accept", accept);
-            }
+        if (accept != null) {
+            requestBuilder.header("Accept", accept);
+        }
 
-            if (body != null) {
-                var bodyData = objectMapper.writeValueAsBytes(body);
-                requestBuilder.POST(HttpRequest.BodyPublishers.ofByteArray(bodyData));
-            } else {
-                requestBuilder.GET();
-            }
+        if (body != null) {
+            requestBuilder.header("Content-Type", body.getContentType());
+            requestBuilder.POST(body.getBodyPublisher());
+        } else {
+            requestBuilder.GET();
+        }
 
-            return requestBuilder;
-        } catch (IOException e) {
-            throw new APIstaxException(e);
+        return requestBuilder;
+    }
+
+    private interface BodyProvider {
+
+        String getContentType();
+
+        HttpRequest.BodyPublisher getBodyPublisher() throws IOException;
+    }
+
+    private static class JsonBodyProvider implements BodyProvider {
+
+        private final Object payload;
+        private final ObjectMapper objectMapper;
+
+        public JsonBodyProvider(Object payload, ObjectMapper objectMapper) {
+            this.payload = payload;
+            this.objectMapper = objectMapper;
+        }
+
+        @Override
+        public String getContentType() {
+            return "application/json";
+        }
+
+        @Override
+        public HttpRequest.BodyPublisher getBodyPublisher() throws IOException {
+            var bodyData = objectMapper.writeValueAsBytes(payload);
+            return HttpRequest.BodyPublishers.ofByteArray(bodyData);
+        }
+    }
+
+    private static class FileBodyProvider implements BodyProvider {
+
+        private final InputStream stream;
+
+        public FileBodyProvider(InputStream stream) {
+            this.stream = stream;
+        }
+
+        @Override
+        public String getContentType() {
+            return "multipart/form-data";
+        }
+
+        @Override
+        public HttpRequest.BodyPublisher getBodyPublisher() {
+            var publisher = HttpRequest.BodyPublishers.ofInputStream(() -> stream);
+
+            return MultipartBodyPublisher.newBuilder()
+                    .formPart("file", "document.pdf", publisher, MediaType.APPLICATION_OCTET_STREAM)
+                    .build();
         }
     }
 }
