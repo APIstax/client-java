@@ -191,6 +191,10 @@ public class APIstaxClientImpl implements APIstaxClient {
                     var errorMessage = objectMapper.readValue(response.body(), ErrorMessage.class);
                     throw new APIstaxException(errorMessage.getMessages());
                 } catch (IOException e) {
+                    if(response.statusCode() == 401) {
+                        throw new APIstaxException(List.of("message.forbidden"), e);
+                    }
+
                     throw new APIstaxException(List.of("message.unknownError"), e);
                 }
             }
