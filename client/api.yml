@@ -1,7 +1,7 @@
 ---
 openapi: 3.1.0
 info:
-  version: 1.7.1
+  version: 1.8.1
   title: APIstax
   summary: Secure and reliable APIs
   termsOfService: https://apistax.io/terms-of-use
@@ -514,6 +514,84 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/PdfToPdfA"
+        "402":
+          $ref: "#/components/responses/PaymentRequired"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/spayd-qr-code:
+    post:
+      summary: Generate a valid Short Payment Descriptor (SPAYD) QR Code
+      operationId: generateSpaydQrCodeJson
+      tags:
+        - SPAYD QR Code
+      requestBody:
+        description: QR Code payload to generate
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SpaydQrCodePayload"
+      responses:
+        "200":
+          $ref: "#/components/responses/SpaydQrCode"
+        "402":
+          $ref: "#/components/responses/PaymentRequired"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/pay-by-square-qr-code:
+    post:
+      summary: Generate a valid PAY by square QR Code
+      operationId: generatePayBySquareQrCodeJson
+      tags:
+        - Pay By Square QR Code
+      requestBody:
+        description: QR Code payload to generate
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PayBySquareQrCodePayload"
+      responses:
+        "200":
+          $ref: "#/components/responses/PayBySquareQrCode"
+        "402":
+          $ref: "#/components/responses/PaymentRequired"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "406":
+          $ref: "#/components/responses/NotAcceptable"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+  /v1/hct-qr-code:
+    post:
+      summary: Generate a valid Hungarian Instant Payment QR Code
+      operationId: generateHctQrCodeJson
+      tags:
+        - HCT QR Code
+      requestBody:
+        description: QR Code payload to generate
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/HctQrCodePayload"
+      responses:
+        "200":
+          $ref: "#/components/responses/HctQrCode"
         "402":
           $ref: "#/components/responses/PaymentRequired"
         "403":
@@ -1643,6 +1721,335 @@ components:
           type: string
           format: binary
           description: The PDF file to be converted to PDF/A
+    SpaydQrCodeAccount:
+      type: object
+      description: The recipient's account details in the form of an IBAN and a BIC
+        or as a Czech bank account
+      properties:
+        iban:
+          type: string
+          description: The international bank account number of the recipient
+        bic:
+          type: string
+          description: The bank identifier code of the recipient bank
+        prefix:
+          type: string
+          description: The prefix of the recipient account
+        number:
+          type: string
+          description: The number of the recipient account
+        bankCode:
+          type: string
+          description: The bank code of the recipient account
+    SpaydQrCodeNotification:
+      type: object
+      description: The information for a potential notification
+      properties:
+        type:
+          type: string
+          enum:
+            - MAIL
+            - PHONE
+          description: The notification type
+        value:
+          type: string
+          description: "Depending on the type selected, either the phone number or\
+            \ the email address"
+    SpaydQrCodePayload:
+      type: object
+      required:
+        - accounts
+      properties:
+        accounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/SpaydQrCodeAccount"
+          description: The recipient's bank accounts
+        amount:
+          type: number
+          format: double
+          description: The amount with a maximum of two decimal places
+          maximum: 9999999
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          description: The size of the QR code in pixels
+          default: 300
+          maximum: 2000
+          minimum: 100
+        reference:
+          type: string
+          description: The payment reference
+        recipient:
+          type: string
+          description: The recipients name
+        dueDate:
+          type: string
+          format: date
+          description: "The due date in the format YYYY-MM-DD, for example 2020-01-31"
+        instantPayment:
+          type: boolean
+          description: True if the payment should be a instant payment
+          default: false
+        message:
+          type: string
+          description: A user hint
+        notification:
+          $ref: "#/components/schemas/SpaydQrCodeNotification"
+        expirationDate:
+          type: string
+          format: date
+          description: "The expiration date in the format YYYY-MM-DD, for example\
+            \ 2020-01-31"
+    PayBySquareQrCodeAccount:
+      type: object
+      description: The recipient's account details in the form of an IBAN and a BIC
+      properties:
+        iban:
+          type: string
+          description: The international bank account number of the recipient
+        bic:
+          type: string
+          description: The bank identifier code of the recipient bank
+    PayBySquareQrCodeRecipient:
+      type: object
+      description: The recipient's details
+      properties:
+        name:
+          type: string
+          description: The name of the recipient
+        street:
+          type: string
+          description: The street of the recipient
+        city:
+          type: string
+          description: The city of the recipient
+    PayBySquareQrCodeStandingOrder:
+      type: object
+      description: The standing order details
+      properties:
+        day:
+          type: integer
+          format: int32
+          description: The day on which the payment occurs.
+        month:
+          type: integer
+          format: int32
+          description: "The month on which the payment occurs. Must be specified if\
+            \ period is set to one of the following values: WEEKLY, BIWEEKLY, MONTHLY,\
+            \ BIMONTHLY"
+        period:
+          type: string
+          enum:
+            - DAILY
+            - WEEKLY
+            - BIWEEKLY
+            - MONTHLY
+            - BIMONTHLY
+            - QUARTERLY
+            - SEMIANNUALLY
+            - ANNUALLY
+          description: The periodicity of the payment.
+        lastDate:
+          type: string
+          format: date
+          description: "Defines the day of the last payment of the standing order.\
+            \ After this date, standing order is cancelled. The format is YYYY-MM-DD,\
+            \ for example 2020-01-31"
+    PayBySquareQrCodeDirectDebit:
+      type: object
+      description: The direct debit details
+      properties:
+        scheme:
+          type: string
+          enum:
+            - SEPA
+            - OTHER
+          description: "The direct debit scheme. SEPA value, if direct debit is using\
+            \ SEPA direct debit scheme or OTHER when an ordinary direct debit is defined"
+        type:
+          type: string
+          enum:
+            - ONE_OFF
+            - RECURRENT
+          description: Can be ONE_OFF for one time debit or RECURRENT for repeated
+            debit until cancelled
+        variableSymbol:
+          type: string
+          description: The direct debit reference. Can be combined with specificSymbol
+            variable.
+        specificSymbol:
+          type: string
+          description: The direct debit reference. Can be combined with variableSymbol
+            variable.
+        reference:
+          type: string
+          description: The direct debit reference
+        mandate:
+          type: string
+          description: The direct debit reference. Must be combined with creditor
+            and contract.
+        creditor:
+          type: string
+          description: The direct debit reference. Must be combined with mandate and
+            contract.
+        contract:
+          type: string
+          description: The direct debit reference. Must be combined with mandate and
+            creditor.
+        maxAmount:
+          type: number
+          format: float
+          description: The maximum amount that can be pre-filled for the user.
+        validTill:
+          type: string
+          format: date
+          description: "The date after which direct debit is cancelled in the format\
+            \ YYYY-MM-DD, for example 2020-01-31."
+    PayBySquareQrCodePayment:
+      type: object
+      required:
+        - accounts
+        - recipient
+      properties:
+        type:
+          type: string
+          enum:
+            - STANDING_ORDER
+            - PAYMENT_ORDER
+            - DIRECT_DEBIT
+          description: The payment type
+        accounts:
+          type: array
+          items:
+            $ref: "#/components/schemas/PayBySquareQrCodeAccount"
+          description: The recipient's bank accounts
+        amount:
+          type: number
+          format: double
+          description: The amount with a maximum of two decimal places
+        currency:
+          type: string
+          description: The currency according to ISO 4217
+          default: EUR
+        dueDate:
+          type: string
+          format: date
+          description: "The due date in the format YYYY-MM-DD, for example 2020-01-31"
+        recipient:
+          $ref: "#/components/schemas/PayBySquareQrCodeRecipient"
+        standingOrder:
+          $ref: "#/components/schemas/PayBySquareQrCodeStandingOrder"
+        directDebit:
+          $ref: "#/components/schemas/PayBySquareQrCodeDirectDebit"
+        variableSymbol:
+          type: string
+          description: The reference. Can be combined with variable constantSymbol
+            and specificSymbol
+        constantSymbol:
+          type: string
+          description: The reference. Can be combined with variable constantSymbol
+            and specificSymbol
+        specificSymbol:
+          type: string
+          description: The reference. Can be combined with variable constantSymbol
+            and specificSymbol
+        reference:
+          type: string
+          description: The SEPA payment reference
+        note:
+          type: string
+          description: "The payment note. The recommended structure is as follows:\
+            \ Issuer - Subject - Term, for example Law Firm - legal services - 2020-01"
+    PayBySquareQrCodePayload:
+      type: object
+      required:
+        - payments
+      properties:
+        size:
+          type: integer
+          format: int32
+          description: The size of the QR code in pixels
+          default: 300
+          maximum: 2000
+          minimum: 100
+        invoice:
+          type: string
+          description: The corresponding invoice number
+        payments:
+          type: array
+          items:
+            $ref: "#/components/schemas/PayBySquareQrCodePayment"
+          description: The payments
+    HctQrCodePayload:
+      type: object
+      required:
+        - bic
+        - iban
+        - recipient
+        - validTill
+      properties:
+        bic:
+          type: string
+          description: The bank identifier code of the recipient bank
+        iban:
+          type: string
+          description: The international bank account number of the recipient
+        recipient:
+          type: string
+          description: The recipients name
+        currency:
+          type: string
+          description: The currency according to ISO 4217
+          default: EUR
+        amount:
+          type: number
+          format: int64
+          description: The amount without decimal places
+          maximum: 999999999999
+          minimum: 0
+        size:
+          type: integer
+          format: int32
+          description: The size of the QR code in pixels
+          default: 300
+          maximum: 2000
+          minimum: 100
+        validTill:
+          type: string
+          format: date-time
+          description: "The date time until which the code is valid in the format\
+            \ YYYY-MM-DDThh:mm:ss, for example 2020-01-31T10:320:00Z"
+        remittanceInformation:
+          type: string
+          description: The remittance information
+        shopId:
+          type: string
+          description: In case of physical retail purchases to identify the point
+            of sale.
+        merchantId:
+          type: string
+          description: In case of physical retail purchases to identify the corresponding
+            device like cash register or POS terminal.
+        invoiceId:
+          type: string
+          description: The identifier of the bill or invoice to be paid.
+        customerId:
+          type: string
+          description: The potential customer identifier of a service provider for
+            bill payments.
+        internalId:
+          type: string
+          description: The internal identifier
+        loyaltyId:
+          type: string
+          description: The potential identifier for linked specific discounts or loyalty
+            card numbers.
+        navVerificationCode:
+          type: string
+          description: The National Tax and Customs Administration (NAV) verification
+            code in the case of retail purchases.
   responses:
     HtmlToPdf:
       description: The generated PDF file
@@ -1763,6 +2170,27 @@ components:
       description: The converted PDF/A file
       content:
         application/pdf:
+          schema:
+            type: string
+            format: byte
+    SpaydQrCode:
+      description: The generated QR code as PNG
+      content:
+        image/png:
+          schema:
+            type: string
+            format: byte
+    PayBySquareQrCode:
+      description: The generated QR code as PNG
+      content:
+        image/png:
+          schema:
+            type: string
+            format: byte
+    HctQrCode:
+      description: The generated QR code as PNG
+      content:
+        image/png:
           schema:
             type: string
             format: byte
