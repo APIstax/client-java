@@ -1,5 +1,6 @@
 package io.apistax.client;
 
+import io.apistax.ApiException;
 import io.apistax.models.*;
 
 import java.io.InputStream;
@@ -155,6 +156,33 @@ public interface APIstaxClient {
      * @throws APIstaxException if fails to make API call
      */
     byte[] convertPdfToPdfA(InputStream file) throws APIstaxException;
+
+    /**
+     * Generate a valid Short Payment Descriptor (SPAYD) QR Code
+     *
+     * @param payload QR Code payload to generate (required)
+     * @return byte[]
+     * @throws APIstaxException if fails to make API call
+     */
+    byte[] generateSpaydQrCode(SpaydQrCodePayload payload) throws APIstaxException;
+
+    /**
+     * Generate a valid PAY by square QR Code
+     *
+     * @param payload QR Code payload to generate (required)
+     * @return byte[]
+     * @throws APIstaxException if fails to make API call
+     */
+    byte[] generatePayBySquareQrCode(PayBySquareQrCodePayload payload) throws APIstaxException;
+
+    /**
+     * Generate a valid Hungarian Instant Payment QR Code
+     *
+     * @param payload QR Code payload to generate (required)
+     * @return byte[]
+     * @throws APIstaxException if fails to make API call
+     */
+    byte[] generateHctQrCode(HctQrCodePayload payload) throws APIstaxException;
 
     /**
      * Create a invoice PDF

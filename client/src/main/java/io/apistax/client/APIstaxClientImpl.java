@@ -138,6 +138,21 @@ public class APIstaxClientImpl implements APIstaxClient {
     }
 
     @Override
+    public byte[] generateSpaydQrCode(SpaydQrCodePayload payload) throws APIstaxException {
+        return requestBinary("/v1/spayd-qr-code", new JsonBodyProvider(payload, objectMapper), "image/png");
+    }
+
+    @Override
+    public byte[] generateHctQrCode(HctQrCodePayload payload) throws APIstaxException {
+        return requestBinary("/v1/hct-qr-code", new JsonBodyProvider(payload, objectMapper), "image/png");
+    }
+
+    @Override
+    public byte[] generatePayBySquareQrCode(PayBySquareQrCodePayload payload) throws APIstaxException {
+        return requestBinary("/v1/pay-by-square-qr-code", new JsonBodyProvider(payload, objectMapper), "image/png");
+    }
+
+    @Override
     @Deprecated
     public byte[] generateInvoicePdfV1(InvoicePayloadV1 payload) throws APIstaxException {
         return requestBinary("/v1/invoice-pdf", new JsonBodyProvider(payload, objectMapper), "application/pdf");
@@ -191,7 +206,7 @@ public class APIstaxClientImpl implements APIstaxClient {
                     var errorMessage = objectMapper.readValue(response.body(), ErrorMessage.class);
                     throw new APIstaxException(errorMessage.getMessages());
                 } catch (IOException e) {
-                    if(response.statusCode() == 401) {
+                    if (response.statusCode() == 401) {
                         throw new APIstaxException(List.of("message.forbidden"), e);
                     }
 
@@ -199,7 +214,7 @@ public class APIstaxClientImpl implements APIstaxClient {
                 }
             }
 
-            try(var inputStream = response.body()) {
+            try (var inputStream = response.body()) {
                 return mapper.apply(inputStream);
             }
         } catch (IOException e) {
