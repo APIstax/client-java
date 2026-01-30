@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.apistax"
-version = "1.7.0"
+version = "1.8.0"
 
 dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api:3.0.0")
