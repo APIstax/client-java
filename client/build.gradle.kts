@@ -27,7 +27,7 @@ dependencies {
     testImplementation("org.wiremock:wiremock:3.13.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.0")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.14.1")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.0.2")
 }
 
 buildConfig {
