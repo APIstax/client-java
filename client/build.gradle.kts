@@ -25,8 +25,8 @@ dependencies {
     implementation("com.github.mizosoft.methanol:methanol:1.9.0")
 
     testImplementation("org.wiremock:wiremock:3.13.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:6.0.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.2")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.14.1")
 }
 
