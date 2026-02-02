@@ -3,7 +3,7 @@ import java.util.Properties
 
 plugins {
     id("java-library")
-    id("org.openapi.generator") version "7.17.0"
+    id("org.openapi.generator") version "7.19.0"
     id("org.kordamp.gradle.jandex") version "2.3.0"
     id("com.github.gmazzo.buildconfig") version "6.0.6"
     id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.4"
